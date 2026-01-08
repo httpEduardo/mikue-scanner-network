@@ -1,43 +1,43 @@
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { Input } from '@/components/ui/input'
+import { ScrollArea } from '@/components/ui/s
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { 
-  CheckCircle, 
-  XCircle,
-  ClockCounterClockwise,
+  ClockCo
+} from '@phosph
+
+  name: string
   Warning,
   GlobeHemisphereWest
 } from '@phosphor-icons/react'
-import { toast } from 'sonner'
+  status: 'checking' | 'succes
 
-interface DNSServer {
-  name: string
-  provider: string
-  location: string
+}
+const DNS_SERV
+  { name: 'Cloudfl
+  { name: 'Quad9',
+ 
+
+
+  onScanComplete?: 
+
+  const [doma
+  const [results, setRe
+  const [progres
 }
 
-interface PropagationResult {
-  server: DNSServer
-  status: 'checking' | 'success' | 'failure' | 'mismatch'
-  ip?: string
-  responseTime?: number
-  error?: string
-}
+      return
 
-const DNS_SERVERS: DNSServer[] = [
-  { name: 'Google Public DNS', provider: '8.8.8.8', location: 'Global' },
-  { name: 'Cloudflare', provider: '1.1.1.1', location: 'Global' },
-  { name: 'OpenDNS', provider: '208.67.222.222', location: 'Global' },
-  { name: 'Quad9', provider: '9.9.9.9', location: 'Global' },
-  { name: 'Level3', provider: '209.244.0.3', location: 'US' },
-  { name: 'Verisign', provider: '64.6.64.6', location: 'US' },
-  { name: 'Comodo Secure DNS', provider: '8.26.56.26', location: 'Global' },
-  { name: 'AdGuard DNS', provider: '94.140.14.14', location: 'Global' }
-]
+    setProgress(0)
+
+      server,
+    }))
+    setResults(allResults)
+    let completedChecks = 0
+
+ 
 
 interface DNSPropagationCheckerProps {
   onScanComplete?: (scan: any) => void
@@ -45,43 +45,6 @@ interface DNSPropagationCheckerProps {
 
 export default function DNSPropagationChecker({ onScanComplete }: DNSPropagationCheckerProps) {
   const [domain, setDomain] = useState('')
-  const [recordType, setRecordType] = useState<'A' | 'AAAA' | 'CNAME' | 'MX'>('A')
-  const [results, setResults] = useState<PropagationResult[]>([])
-  const [isChecking, setIsChecking] = useState(false)
-  const [progress, setProgress] = useState(0)
-  const [expectedValue, setExpectedValue] = useState('')
-
-  const checkDNSPropagation = async () => {
-    if (!domain) {
-      toast.error('Please enter a domain name')
-      return
-    }
-
-    setIsChecking(true)
-    setProgress(0)
-    setExpectedValue('')
-
-    const allResults: PropagationResult[] = DNS_SERVERS.map(server => ({
-      server,
-      status: 'checking' as const
-    }))
-
-    setResults(allResults)
-
-    let completedChecks = 0
-    let firstResolvedValue = ''
-
-    for (let i = 0; i < DNS_SERVERS.length; i++) {
-      const server = DNS_SERVERS[i]
-      const startTime = Date.now()
-
-      try {
-        const mockIp = `${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`
-        
-        await new Promise(resolve => setTimeout(resolve, Math.random() * 1500 + 500))
-
-        if (!firstResolvedValue) {
-          firstResolvedValue = mockIp
           setExpectedValue(mockIp)
         }
 

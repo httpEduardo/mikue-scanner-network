@@ -7,24 +7,52 @@ A playful Hatsune Miku-themed network utility dashboard where Miku assists users
 2. **Helpful** - Provides useful network utilities in an approachable, non-intimidating way with clear results and explanations
 3. **Interactive** - Features responsive animations and delightful micro-interactions that make technical tasks feel engaging
 
-**Complexity Level**: Light Application (multiple features with basic state)
-This is a utility dashboard with several distinct network tools that maintain state for history and results, but doesn't require complex data relationships or multi-view navigation beyond tabs/sections.
+**Complexity Level**: Complex Application (advanced functionality with multiple views)
+This is a comprehensive penetration testing toolkit with seven distinct network security tools that maintain state, provide real-time feedback, and require sophisticated data handling across multiple scanning methodologies.
 
 ## Essential Features
 
 ### Domain/IP Lookup
-- **Functionality**: Resolves domain names to IP addresses and provides geographic information
+- **Functionality**: Resolves domain names to IP addresses and provides geographic information using Google DNS API
 - **Purpose**: Allows users to discover the IP address and location data for any website
-- **Trigger**: User enters a domain name (e.g., example.com) and clicks "Scan"
-- **Progression**: Input domain → Validate input → Fetch IP data via API → Display IP, location, ISP info → Save to history
+- **Trigger**: User enters a domain name (e.g., example.com) and clicks "Lookup"
+- **Progression**: Input domain → Validate input → Resolve DNS via Google DNS API → Fetch geo data → Display IP, location, ISP info → Save to history
 - **Success criteria**: Displays accurate IP address and related information, handles invalid domains gracefully
 
 ### Port Scanner
-- **Functionality**: Checks common ports (80, 443, 22, 21, 3306, etc.) for a given IP/domain
+- **Functionality**: Checks common ports (21, 22, 23, 25, 80, 110, 143, 443, 3306, 5432, 6379, 8080, 27017) for a given IP/domain
 - **Purpose**: Helps users identify which services are potentially accessible on a target
-- **Trigger**: User enters IP/domain and optionally selects ports to scan
-- **Progression**: Input target → Select port range → Simulate port checks → Display open/closed status with service names → Animate results appearing
+- **Trigger**: User enters IP/domain and clicks "Scan"
+- **Progression**: Input target → Simulate port checks on common ports → Display open/closed status with service names → Animate results appearing → Save to history
 - **Success criteria**: Shows clear visual indication of port status with recognizable service labels
+
+### SSL/TLS Certificate Checker
+- **Functionality**: Verifies SSL certificate validity, expiration dates, and security grade
+- **Purpose**: Helps users assess the security of a website's SSL/TLS configuration
+- **Trigger**: User enters a domain and clicks "Check"
+- **Progression**: Input domain → Attempt HTTPS connection → Display certificate details, expiration, issuer, protocol → Show security grade → Save to history
+- **Success criteria**: Shows certificate validity, days remaining, and security rating with clear visual indicators
+
+### HTTP Headers Analyzer
+- **Functionality**: Analyzes security-related HTTP headers and provides recommendations
+- **Purpose**: Helps users understand security posture through header configuration
+- **Trigger**: User enters a URL and clicks "Analyze"
+- **Progression**: Input URL → Check for security headers (CSP, HSTS, X-Frame-Options, etc.) → Calculate security score → Display findings with descriptions → Save to history
+- **Success criteria**: Shows which security headers are present/missing with explanations and overall security grade
+
+### WHOIS Lookup
+- **Functionality**: Retrieves domain registration and ownership information
+- **Purpose**: Provides transparency about domain ownership, registration dates, and administrative contacts
+- **Trigger**: User enters a domain and clicks "Lookup"
+- **Progression**: Input domain → Fetch WHOIS data → Display registrar, dates, status, nameservers, registrant info → Save to history
+- **Success criteria**: Shows comprehensive registration details in an organized, readable format
+
+### Subdomain Finder
+- **Functionality**: Discovers active subdomains for a given domain by checking common subdomain patterns
+- **Purpose**: Helps users map the subdomain structure of a target domain
+- **Trigger**: User enters a domain and clicks "Scan"
+- **Progression**: Input domain → Test common subdomains (www, mail, api, admin, etc.) → Display active subdomains with IP addresses → Show progress bar → Save to history
+- **Success criteria**: Shows list of discovered active subdomains with their resolved IP addresses
 
 ### Network Info Dashboard
 - **Functionality**: Displays information about the user's own connection
@@ -93,11 +121,11 @@ Animations should feel snappy and cyberpunk-inspired with glowing effects and el
 
 - **Components**:
   - `Card` - Main container for each utility tool, with dark background and subtle teal border glow
-  - `Tabs` - Switch between different network tools (Lookup, Port Scan, My Network)
-  - `Input` - Text fields for domain/IP entry, with focus glow effect
+  - `Tabs` - Switch between different network tools (Domain Lookup, Port Scanner, SSL Checker, Headers Analyzer, WHOIS, Subdomain Finder, My Network)
+  - `Input` - Text fields for domain/IP/URL entry, with focus glow effect
   - `Button` - Primary actions with gradient hover states and loading spinners
-  - `Badge` - Status indicators for ports (open/closed), styled with appropriate colors
-  - `ScrollArea` - History sidebar with smooth scrolling
+  - `Badge` - Status indicators for ports (open/closed), SSL validity, security scores, styled with appropriate colors
+  - `ScrollArea` - History sidebar and long result lists with smooth scrolling
   - `Separator` - Dividers between sections with subtle teal glow
   - `Progress` - Loading bars for scan progress with animated gradient
   - `Avatar` - Miku character icon in header
@@ -117,13 +145,18 @@ Animations should feel snappy and cyberpunk-inspired with glowing effects and el
 - **Icon Selection**:
   - `GlobeHemisphereWest` - Domain lookup tool
   - `Broadcast` - Port scanner tool
+  - `ShieldCheck` - SSL/TLS checker tool
+  - `Article` - HTTP headers analyzer tool
+  - `IdentificationCard` - WHOIS lookup tool
+  - `Tree` - Subdomain finder tool
   - `WifiHigh` - Network info
   - `ClockCounterClockwise` - History sidebar
   - `MagnifyingGlass` - Search/scan action
   - `CheckCircle` - Success states
   - `XCircle` - Error states
-  - `LockKey` - Open ports
-  - `LockKeyOpen` - Closed ports
+  - `LockKey` - Closed ports
+  - `LockKeyOpen` - Open ports
+  - `ShieldWarning` - Security warnings
 
 - **Spacing**:
   - Page padding: p-6 (24px)

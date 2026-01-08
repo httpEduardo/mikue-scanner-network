@@ -3,7 +3,16 @@ import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
-import { ClockCounterClockwise, GlobeHemisphereWest, Broadcast, Eye } from '@phosphor-icons/react'
+import { 
+  ClockCounterClockwise, 
+  GlobeHemisphereWest, 
+  Broadcast, 
+  Eye, 
+  ShieldCheck, 
+  Article, 
+  IdentificationCard, 
+  Tree 
+} from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
 import { useSoundEffects } from '@/hooks/use-sound-effects'
 
@@ -60,14 +69,27 @@ export default function ScanHistory({ history, onSelectScan }: ScanHistoryProps)
                 >
                   <div className="p-3 rounded-lg border border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer group">
                     <div className="flex items-start gap-2 mb-2">
-                      {scan.type === 'domain' ? (
+                      {scan.type === 'domain' && (
                         <GlobeHemisphereWest className="text-primary flex-shrink-0 mt-0.5" size={16} weight="duotone" />
-                      ) : (
+                      )}
+                      {scan.type === 'port' && (
                         <Broadcast className="text-primary flex-shrink-0 mt-0.5" size={16} weight="duotone" />
+                      )}
+                      {scan.type === 'ssl' && (
+                        <ShieldCheck className="text-primary flex-shrink-0 mt-0.5" size={16} weight="duotone" />
+                      )}
+                      {scan.type === 'headers' && (
+                        <Article className="text-primary flex-shrink-0 mt-0.5" size={16} weight="duotone" />
+                      )}
+                      {scan.type === 'whois' && (
+                        <IdentificationCard className="text-primary flex-shrink-0 mt-0.5" size={16} weight="duotone" />
+                      )}
+                      {scan.type === 'subdomain' && (
+                        <Tree className="text-primary flex-shrink-0 mt-0.5" size={16} weight="duotone" />
                       )}
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">
-                          {scan.type === 'domain' ? scan.domain : scan.target}
+                          {scan.domain || scan.target || scan.url}
                         </p>
                         {scan.type === 'domain' && scan.result?.ip && (
                           <p className="text-xs font-mono text-muted-foreground truncate">
@@ -77,6 +99,21 @@ export default function ScanHistory({ history, onSelectScan }: ScanHistoryProps)
                         {scan.type === 'port' && scan.openPorts !== undefined && (
                           <p className="text-xs text-muted-foreground">
                             {scan.openPorts} open ports
+                          </p>
+                        )}
+                        {scan.type === 'ssl' && scan.result?.valid !== undefined && (
+                          <p className="text-xs text-muted-foreground">
+                            {scan.result.valid ? '✓ Valid SSL' : '✗ Invalid SSL'}
+                          </p>
+                        )}
+                        {scan.type === 'headers' && scan.result?.securityScore !== undefined && (
+                          <p className="text-xs text-muted-foreground">
+                            Score: {scan.result.securityScore}%
+                          </p>
+                        )}
+                        {scan.type === 'subdomain' && scan.result?.totalFound !== undefined && (
+                          <p className="text-xs text-muted-foreground">
+                            {scan.result.totalFound} subdomains
                           </p>
                         )}
                       </div>

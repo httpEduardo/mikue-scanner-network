@@ -18,7 +18,11 @@ import {
   XCircle,
   LockKey,
   LockKeyOpen,
-  Warning
+  Warning,
+  ShieldCheck,
+  Article,
+  IdentificationCard,
+  Tree
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import MikuCharacter from '@/components/MikuCharacter'
@@ -27,6 +31,10 @@ import PortScanner from '@/components/PortScanner'
 import NetworkInfo from '@/components/NetworkInfo'
 import ScanHistory from '@/components/ScanHistory'
 import DancingWaifus from '@/components/DancingWaifus'
+import SSLChecker from '@/components/SSLChecker'
+import HeadersAnalyzer from '@/components/HeadersAnalyzer'
+import WhoisLookup from '@/components/WhoisLookup'
+import SubdomainFinder from '@/components/SubdomainFinder'
 
 function App() {
   const [activeTab, setActiveTab] = useState('lookup')
@@ -204,18 +212,34 @@ function App() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-3">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-3 mb-6">
-                  <TabsTrigger value="lookup" className="gap-2">
+                <TabsList className="grid w-full grid-cols-7 mb-6 h-auto">
+                  <TabsTrigger value="lookup" className="gap-2 py-3">
                     <GlobeHemisphereWest size={18} weight="duotone" />
-                    <span className="hidden sm:inline">Domain Lookup</span>
+                    <span className="hidden sm:inline">Domain</span>
                   </TabsTrigger>
-                  <TabsTrigger value="ports" className="gap-2">
+                  <TabsTrigger value="ports" className="gap-2 py-3">
                     <Broadcast size={18} weight="duotone" />
-                    <span className="hidden sm:inline">Port Scanner</span>
+                    <span className="hidden sm:inline">Ports</span>
                   </TabsTrigger>
-                  <TabsTrigger value="network" className="gap-2">
+                  <TabsTrigger value="ssl" className="gap-2 py-3">
+                    <ShieldCheck size={18} weight="duotone" />
+                    <span className="hidden sm:inline">SSL</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="headers" className="gap-2 py-3">
+                    <Article size={18} weight="duotone" />
+                    <span className="hidden sm:inline">Headers</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="whois" className="gap-2 py-3">
+                    <IdentificationCard size={18} weight="duotone" />
+                    <span className="hidden sm:inline">WHOIS</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="subdomain" className="gap-2 py-3">
+                    <Tree size={18} weight="duotone" />
+                    <span className="hidden sm:inline">Subdomain</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="network" className="gap-2 py-3">
                     <WifiHigh size={18} weight="duotone" />
-                    <span className="hidden sm:inline">My Network</span>
+                    <span className="hidden sm:inline">Network</span>
                   </TabsTrigger>
                 </TabsList>
 
@@ -225,6 +249,22 @@ function App() {
 
                 <TabsContent value="ports" className="mt-0">
                   <PortScanner onScanComplete={addToHistory} />
+                </TabsContent>
+
+                <TabsContent value="ssl" className="mt-0">
+                  <SSLChecker onScanComplete={addToHistory} />
+                </TabsContent>
+
+                <TabsContent value="headers" className="mt-0">
+                  <HeadersAnalyzer onScanComplete={addToHistory} />
+                </TabsContent>
+
+                <TabsContent value="whois" className="mt-0">
+                  <WhoisLookup onScanComplete={addToHistory} />
+                </TabsContent>
+
+                <TabsContent value="subdomain" className="mt-0">
+                  <SubdomainFinder onScanComplete={addToHistory} />
                 </TabsContent>
 
                 <TabsContent value="network" className="mt-0">
@@ -239,6 +279,14 @@ function App() {
                   setActiveTab('lookup')
                 } else if (scan.type === 'port') {
                   setActiveTab('ports')
+                } else if (scan.type === 'ssl') {
+                  setActiveTab('ssl')
+                } else if (scan.type === 'headers') {
+                  setActiveTab('headers')
+                } else if (scan.type === 'whois') {
+                  setActiveTab('whois')
+                } else if (scan.type === 'subdomain') {
+                  setActiveTab('subdomain')
                 }
                 toast.info('Scan loaded from history')
               }} />

@@ -37,8 +37,10 @@ export default function DomainLookup({ onScanComplete }: DomainLookupProps) {
       return
     }
 
-    const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?\.[a-zA-Z]{2,}$/
-    if (!domainRegex.test(domain)) {
+    const cleanDomain = domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '').trim()
+    const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?(\.[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?)*\.[a-zA-Z]{2,}$/
+    
+    if (!domainRegex.test(cleanDomain)) {
       setError('Please enter a valid domain name (e.g., example.com)')
       playErrorSound()
       return
@@ -50,33 +52,39 @@ export default function DomainLookup({ onScanComplete }: DomainLookupProps) {
     playScanStartSound()
 
     try {
-      const response = await fetch(`https://ipapi.co/${domain}/json/`)
-      const data = await response.json()
+      const dnsResponse = await fetch(`https://dns.google/resolve?name=${cleanDomain}&type=A`)
+      const dnsData = await dnsResponse.json()
 
-      if (data.error) {
-        setError(data.reason || 'Failed to lookup domain')
+      if (!dnsData.Answer || dnsData.Answer.length === 0) {
+        setError('Could not resolve domain to IP address')
         playErrorSound()
         setLoading(false)
         return
       }
 
+      const ipAddress = dnsData.Answer[0].data
+
+      const geoResponse = await fetch(`https://ipapi.co/${ipAddress}/json/`)
+      const geoData = await geoResponse.json()
+
       const lookupResult: LookupResult = {
-        domain,
-        ip: data.ip,
-        country: data.country_name,
-        city: data.city,
-        isp: data.org,
-        org: data.org
+        domain: cleanDomain,
+        ip: ipAddress,
+        country: geoData.country_name,
+        city: geoData.city,
+        isp: geoData.org,
+        org: geoData.org
       }
 
       setResult(lookupResult)
       onScanComplete({
         type: 'domain',
-        domain,
+        domain: cleanDomain,
         result: lookupResult
       })
       playScanCompleteSound()
-      toast.success(`Found IP for ${domain}!`)
+      playSuccessSound()
+      toast.success(`Found IP for ${cleanDomain}!`)
     } catch (err) {
       setError('Network error occurred. Please try again.')
       playErrorSound()

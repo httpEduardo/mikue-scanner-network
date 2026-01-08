@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useKV } from '@github/spark/hooks';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShieldCheck, Activity, ArrowsLeftRight } from '@phosphor-icons/react';
+import { ShieldCheck, ChartLine, ArrowsLeftRight } from '@phosphor-icons/react';
 import SecurityScanner from '@/components/SecurityScanner';
 import ScanHistory from '@/components/ScanHistory';
 import HeadersComparison from '@/components/HeadersComparison';
@@ -13,12 +13,12 @@ function App() {
   const [scans, setScans] = useKV<ScanJob[]>('security-scans', []);
 
   const addScan = (scan: ScanJob) => {
-    setScans((current) => [scan, ...current].slice(0, 50));
+    setScans((current) => [scan, ...(current || [])].slice(0, 50));
   };
 
   const updateScan = (id: string, updates: Partial<ScanJob>) => {
     setScans((current) => 
-      current.map((scan) => scan.id === id ? { ...scan, ...updates } : scan)
+      (current || []).map((scan) => scan.id === id ? { ...scan, ...updates } : scan)
     );
   };
 
@@ -54,7 +54,7 @@ function App() {
                   <p className="text-[10px] text-muted-foreground">Secure Protocol</p>
                 </div>
                 <div className="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center">
-                  <Activity className="text-success" size={20} weight="duotone" />
+                  <ChartLine className="text-success" size={20} weight="duotone" />
                 </div>
               </div>
             </div>
@@ -69,8 +69,8 @@ function App() {
                 Scanner
               </TabsTrigger>
               <TabsTrigger value="history" className="gap-2">
-                <Activity size={18} weight="duotone" />
-                History ({scans.length})
+                <ChartLine size={18} weight="duotone" />
+                History ({scans?.length || 0})
               </TabsTrigger>
               <TabsTrigger value="comparison" className="gap-2">
                 <ArrowsLeftRight size={18} weight="duotone" />
@@ -86,11 +86,11 @@ function App() {
             </TabsContent>
 
             <TabsContent value="history" className="mt-0">
-              <ScanHistory scans={scans} onClearHistory={clearHistory} />
+              <ScanHistory scans={scans || []} onClearHistory={clearHistory} />
             </TabsContent>
 
             <TabsContent value="comparison" className="mt-0">
-              <HeadersComparison scans={scans} />
+              <HeadersComparison scans={scans || []} />
             </TabsContent>
           </Tabs>
         </main>

@@ -113,9 +113,12 @@ export default function HeadersComparison({ scans }: HeadersComparisonProps) {
       }
 
       comparison.push({
-        name: headerName,
+        header: headerName,
         status,
-        values
+        values: selectedScans.map((scan, idx) => ({
+          scanId: scan.id,
+          value: values[idx] || null
+        }))
       });
     });
 
@@ -450,7 +453,7 @@ export default function HeadersComparison({ scans }: HeadersComparisonProps) {
 
                     {comparisonData.map((header, index) => (
                       <motion.div
-                        key={header.name}
+                        key={header.header}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.03 }}
@@ -469,7 +472,7 @@ export default function HeadersComparison({ scans }: HeadersComparisonProps) {
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
                               <p className="font-mono font-semibold text-sm">
-                                {HEADER_DISPLAY_NAMES[header.name] || header.name}
+                                {HEADER_DISPLAY_NAMES[header.header] || header.header}
                               </p>
                               {getStatusBadge(header.status)}
                             </div>
@@ -477,19 +480,19 @@ export default function HeadersComparison({ scans }: HeadersComparisonProps) {
                         </div>
 
                         <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${selectedScans.length}, 1fr)` }}>
-                          {header.values.map((value, idx) => (
+                          {header.values.map((item, idx) => (
                             <div
                               key={idx}
                               className="text-xs p-2 rounded bg-background/50 border border-border/30"
                             >
-                              {value ? (
+                              {item.value ? (
                                 <>
                                   <div className="flex items-center gap-1 mb-1">
                                     <CheckCircle className="text-success" size={14} weight="fill" />
                                     <span className="font-medium text-success">Present</span>
                                   </div>
                                   <p className="font-mono text-muted-foreground break-all line-clamp-2">
-                                    {value}
+                                    {item.value}
                                   </p>
                                 </>
                               ) : (

@@ -60,11 +60,11 @@ export default function ScanResults({ scan }: ScanResultsProps) {
   );
 
   const renderHTTPTLS = (result: HTTPTLSResult) => {
-    const validFrom = new Date(result.tls.cert.valid_from);
-    const validTo = new Date(result.tls.cert.valid_to);
+    const validFrom = result.tls?.cert?.valid_from ? new Date(result.tls.cert.valid_from) : null;
+    const validTo = result.tls?.cert?.valid_to ? new Date(result.tls.cert.valid_to) : null;
     const now = new Date();
-    const isValid = now >= validFrom && now <= validTo;
-    const daysUntilExpiry = Math.floor((validTo.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    const isValid = validFrom && validTo && now >= validFrom && now <= validTo;
+    const daysUntilExpiry = validTo ? Math.floor((validTo.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : 0;
 
     return (
       <div className="space-y-4">
@@ -83,7 +83,7 @@ export default function ScanResults({ scan }: ScanResultsProps) {
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Protocol</p>
-            <Badge className="status-success">{result.tls.protocol}</Badge>
+            <Badge className="status-success">{result.tls?.protocol || 'N/A'}</Badge>
           </div>
         </div>
 
@@ -102,19 +102,19 @@ export default function ScanResults({ scan }: ScanResultsProps) {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-xs text-muted-foreground">Subject</p>
-                <p className="font-mono text-sm">{result.tls.cert.subject?.CN || 'N/A'}</p>
+                <p className="font-mono text-sm">{result.tls?.cert?.subject?.CN || 'N/A'}</p>
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Issuer</p>
-                <p className="font-mono text-sm">{result.tls.cert.issuer?.CN || 'N/A'}</p>
+                <p className="font-mono text-sm">{result.tls?.cert?.issuer?.CN || 'N/A'}</p>
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Valid From</p>
-                <p className="font-mono text-sm">{validFrom.toLocaleDateString()}</p>
+                <p className="font-mono text-sm">{validFrom?.toLocaleDateString() || 'N/A'}</p>
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Valid To</p>
-                <p className="font-mono text-sm">{validTo.toLocaleDateString()}</p>
+                <p className="font-mono text-sm">{validTo?.toLocaleDateString() || 'N/A'}</p>
               </div>
             </div>
             <div>
@@ -125,11 +125,11 @@ export default function ScanResults({ scan }: ScanResultsProps) {
             </div>
             <div>
               <p className="text-xs text-muted-foreground mb-1">Subject Alt Names</p>
-              <p className="font-mono text-xs text-muted-foreground">{result.tls.cert.subjectaltname}</p>
+              <p className="font-mono text-xs text-muted-foreground">{result.tls?.cert?.subjectaltname || 'N/A'}</p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground mb-1">Fingerprint (SHA-256)</p>
-              <p className="font-mono text-xs text-muted-foreground break-all">{result.tls.cert.fingerprint256}</p>
+              <p className="font-mono text-xs text-muted-foreground break-all">{result.tls?.cert?.fingerprint256 || 'N/A'}</p>
             </div>
           </div>
         </div>

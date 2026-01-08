@@ -44,13 +44,15 @@ export async function simulateDNSPropagation(
         resolver,
         status: mismatch ? "mismatch" : "success",
         value,
+        timeMs: Math.round(50 + Math.random() * 200),
         responseTimeMs: Math.round(50 + Math.random() * 200)
       });
     } catch (e: any) {
       results.push({
         resolver,
         status: "failed",
-        error: e?.message ?? "resolve_failed"
+        error: e?.message ?? "resolve_failed",
+        timeMs: 0
       });
     }
   }
@@ -81,9 +83,13 @@ export async function simulateHTTPTLS(
     url: `https://${target}${path}`,
     statusCode: 200,
     latencyMs: Math.round(100 + Math.random() * 300),
-    finalUrl: `https://${target}${path}`,
     tls: {
+      version: "TLSv1.3",
+      cipher: "TLS_AES_256_GCM_SHA384",
       protocol: protocols[Math.floor(Math.random() * protocols.length)],
+      issuer: { CN: "Let's Encrypt Authority X3", O: "Let's Encrypt", C: "US" },
+      valid_from: validFrom.toISOString(),
+      valid_to: validTo.toISOString(),
       cert: {
         subject: { CN: target, O: "Example Organization", C: "US" },
         issuer: { CN: "Let's Encrypt Authority X3", O: "Let's Encrypt", C: "US" },

@@ -2,18 +2,18 @@ export type ScanType = "dns_propagation" | "http_tls" | "headers" | "port_discov
 
 export type ScanStatus = "queued" | "running" | "success" | "failed" | "canceled";
 
+export interface ScanJob {
+  id: string;
+  target: string;
   type: ScanType;
-  status: Sca
-  createdAt: numb
-  finishedAt?: nu
+  status: ScanStatus;
+  createdAt: number;
+  startedAt?: number;
+  finishedAt?: number;
+  error?: string;
   result?: any;
-}
-export interface Sca
-  profile?: "basic" |
-}
-export interface 
-  expected: any
-  results: Array<{
+  progress?: number;
+  options?: ScanOptions;
 }
 
 export interface ScanOptions {
@@ -30,38 +30,45 @@ export interface DNSPropagationResult {
     resolver: string;
     status: "success" | "mismatch" | "failed";
     value?: any;
-      issuer: any;
-      valid_to: str
-     
- 
+    error?: string;
+    timeMs: number;
+    responseTimeMs?: number;
+  }>;
+}
 
+export interface HTTPTLSResult {
   url: string;
+  statusCode?: number;
+  redirects?: string[];
+  latencyMs?: number;
+  tls?: {
+    version: string;
+    cipher: string;
+    protocol?: string;
+    issuer: any;
+    valid_from: string;
+    valid_to: string;
+    cert?: {
+      subject: any;
+      issuer: any;
+      valid_from: string;
+      valid_to: string;
+      subjectaltname?: string;
+      fingerprint256?: string;
+    };
+  };
+  error?: string;
+}
+
+export interface SecurityHeadersResult {
+  url: string;
+  statusCode?: number;
   checks: {
     csp: boolean;
     xfo: boolean;
-    permissions: bo
-  missin
-}
-export inte
-  ports: Array<{
-    state: "open" 
-  }>;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    hsts: boolean;
+    xcto: boolean;
+    referrer: boolean;
     permissions: boolean;
   };
   missing: string[];
@@ -76,7 +83,3 @@ export interface PortDiscoveryResult {
     timeMs: number;
   }>;
 }
-
-
-
-

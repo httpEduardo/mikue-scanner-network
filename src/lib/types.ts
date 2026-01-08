@@ -2,9 +2,9 @@ export type ScanType = "dns_propagation" | "http_tls" | "headers" | "port_discov
 
 export type ScanStatus = "queued" | "running" | "success" | "failed" | "canceled";
 
-export interface ScanOptions {
-  [key: string]: any;
 }
+export interface Scan
+ 
 
 export interface ScanJob {
   id: string;
@@ -14,73 +14,49 @@ export interface ScanJob {
   createdAt: number;
   startedAt?: number;
   finishedAt?: number;
-  error?: string;
-  result?: any;
-  progress?: number;
-  options?: ScanOptions;
-}
-
-export interface DNSPropagationResult {
-  expected: any;
-  recordType: string;
-  resolvers: string[];
+export interface 
+  recordType: s
   results: Array<{
-    resolver: string;
-    status: "success" | "mismatch" | "failed";
-    value?: any;
-    error?: string;
-    timeMs: number;
-    responseTimeMs?: number;
-  }>;
-}
+    status: "success" | 
+ 
 
-export interface HTTPTLSResult {
-  url: string;
-  statusCode?: number;
-  latencyMs?: number;
-  redirects?: string[];
-  tls?: {
+}
+export interface H
+  statusCode?: numb
+  redirects?: string[
     version: string;
-    cipher: string;
-    protocol: string;
-    issuer: any;
-    valid_from: string;
-    valid_to: string;
-    cert?: {
-      subject: any;
-      issuer: any;
-      valid_from: string;
-      valid_to: string;
-      fingerprint256: string;
+    protocol: strin
+    valid_from: str
+    c
+ 
+
       subjectaltname: string;
-    };
   };
-  error?: string;
 }
-
-export interface SecurityHeadersResult {
-  url: string;
-  statusCode?: number;
-  checks: {
+export interface Securi
+  statusC
     csp: boolean;
-    xfo: boolean;
     hsts: boolean;
-    xcto: boolean;
-    referrer: boolean;
-    permissions: boolean;
+    referrer: bo
   };
-  missing: string[];
-  headers: Record<string, string>;
+  headers: Record<str
+
+  ip: string;
+ 
+
 }
 
-export interface PortDiscoveryResult {
-  ip: string;
-  ports: Array<{
-    port: number;
-    state: "open" | "closed" | "filtered";
-    timeMs: number;
-  }>;
-}
+
+
+
+
+
+
+
+
+
+
+
 
 
 

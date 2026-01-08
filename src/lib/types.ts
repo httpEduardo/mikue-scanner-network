@@ -2,10 +2,14 @@ export type ScanType = "dns_propagation" | "http_tls" | "headers" | "port_discov
 
 export type ScanStatus = "queued" | "running" | "success" | "failed" | "canceled";
 
-  status: ScanStatus;
-  startedAt?:
-  error?: string;
-  progress?: numb
+export interface ScanOptions {
+  [key: string]: any;
+}
+
+export interface ScanJob {
+  id: string;
+  type: ScanType;
+  target: string;
   status: ScanStatus;
   createdAt: number;
   startedAt?: number;
@@ -14,43 +18,49 @@ export type ScanStatus = "queued" | "running" | "success" | "failed" | "canceled
   result?: any;
   progress?: number;
   options?: ScanOptions;
- 
-
 }
-export interface HTTPTLSResult {
-  statusCode?: number;
-  latencyMs?: nu
- 
 
-    valid_from: string;
-    cert?: {
-      issuer: an
-      valid_to: string
-      fingerprint2
-  };
-}
-export interface
+export interface DNSPropagationResult {
+  expected: any;
+  recordType: string;
+  resolvers: string[];
+  results: Array<{
+    resolver: string;
+    status: "success" | "mismatch" | "failed";
+    value?: any;
     error?: string;
     timeMs: number;
+    responseTimeMs?: number;
   }>;
 }
 
 export interface HTTPTLSResult {
   url: string;
   statusCode?: number;
+  latencyMs?: number;
   redirects?: string[];
   tls?: {
     version: string;
     cipher: string;
+    protocol: string;
     issuer: any;
     valid_from: string;
     valid_to: string;
+    cert?: {
+      subject: any;
+      issuer: any;
+      valid_from: string;
+      valid_to: string;
+      fingerprint256: string;
+      subjectaltname: string;
+    };
   };
   error?: string;
 }
 
 export interface SecurityHeadersResult {
   url: string;
+  statusCode?: number;
   checks: {
     csp: boolean;
     xfo: boolean;
@@ -61,6 +71,15 @@ export interface SecurityHeadersResult {
   };
   missing: string[];
   headers: Record<string, string>;
+}
+
+export interface PortDiscoveryResult {
+  ip: string;
+  ports: Array<{
+    port: number;
+    state: "open" | "closed" | "filtered";
+    timeMs: number;
+  }>;
 }
 
 

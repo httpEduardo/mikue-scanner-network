@@ -25,7 +25,8 @@ import {
   Tree,
   Database,
   Robot,
-  Code
+  Code,
+  Sword
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import MikuCharacter from '@/components/MikuCharacter'
@@ -41,6 +42,7 @@ import SubdomainFinder from '@/components/SubdomainFinder'
 import DNSRecords from '@/components/DNSRecords'
 import RobotsTxt from '@/components/RobotsTxt'
 import TechStack from '@/components/TechStack'
+import HTTPMethodTester from '@/components/HTTPMethodTester'
 
 function App() {
   const [activeTab, setActiveTab] = useState('lookup')
@@ -218,7 +220,7 @@ function App() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-3">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-5 lg:grid-cols-10 mb-6 h-auto gap-1">
+                <TabsList className="grid w-full grid-cols-5 lg:grid-cols-11 mb-6 h-auto gap-1">
                   <TabsTrigger value="lookup" className="gap-2 py-3">
                     <GlobeHemisphereWest size={18} weight="duotone" />
                     <span className="hidden sm:inline">Domain</span>
@@ -234,6 +236,10 @@ function App() {
                   <TabsTrigger value="headers" className="gap-2 py-3">
                     <Article size={18} weight="duotone" />
                     <span className="hidden sm:inline">Headers</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="methods" className="gap-2 py-3">
+                    <Sword size={18} weight="duotone" />
+                    <span className="hidden sm:inline">Methods</span>
                   </TabsTrigger>
                   <TabsTrigger value="whois" className="gap-2 py-3">
                     <IdentificationCard size={18} weight="duotone" />
@@ -277,6 +283,10 @@ function App() {
                   <HeadersAnalyzer onScanComplete={addToHistory} />
                 </TabsContent>
 
+                <TabsContent value="methods" className="mt-0">
+                  <HTTPMethodTester onScanComplete={addToHistory} />
+                </TabsContent>
+
                 <TabsContent value="whois" className="mt-0">
                   <WhoisLookup onScanComplete={addToHistory} />
                 </TabsContent>
@@ -313,6 +323,8 @@ function App() {
                   setActiveTab('ssl')
                 } else if (scan.type === 'headers') {
                   setActiveTab('headers')
+                } else if (scan.type === 'http-methods') {
+                  setActiveTab('methods')
                 } else if (scan.type === 'whois') {
                   setActiveTab('whois')
                 } else if (scan.type === 'subdomain') {

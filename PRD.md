@@ -61,6 +61,13 @@ This is a comprehensive penetration testing toolkit with ten distinct network se
 - **Progression**: Input domain → Query Google DNS API for all record types → Display records grouped by type with TTL values → Save to history
 - **Success criteria**: Shows comprehensive DNS records with visual categorization by record type
 
+### DNS Propagation Checker
+- **Functionality**: Checks DNS propagation across multiple DNS servers worldwide (Google DNS, Cloudflare, Quad9, OpenDNS, Level3, Comodo, DNS.WATCH, Verisign, AdGuard, CleanBrowsing)
+- **Purpose**: Helps users verify that DNS changes have propagated across different DNS servers globally
+- **Trigger**: User enters a domain, selects record type (A, AAAA, CNAME, MX, TXT), and clicks "Check"
+- **Progression**: Input domain → Select record type → Query 10 different DNS servers simultaneously → Show real-time progress → Display results with status indicators → Calculate propagation percentage → Save to history
+- **Success criteria**: Shows propagation status for each server with response times, identifies mismatches, displays overall propagation percentage
+
 ### Robots.txt Analyzer
 - **Functionality**: Fetches and parses robots.txt file to identify crawling rules and restricted paths
 - **Purpose**: Reveals potentially sensitive directories and sitemap locations

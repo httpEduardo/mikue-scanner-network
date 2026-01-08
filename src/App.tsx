@@ -45,6 +45,7 @@ import RobotsTxt from '@/components/RobotsTxt'
 import TechStack from '@/components/TechStack'
 import HTTPMethodTester from '@/components/HTTPMethodTester'
 import CORSAnalyzer from '@/components/CORSAnalyzer'
+import DNSPropagationChecker from '@/components/DNSPropagationChecker'
 
 function App() {
   const [activeTab, setActiveTab] = useState('lookup')
@@ -222,7 +223,7 @@ function App() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-3">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-6 lg:grid-cols-12 mb-6 h-auto gap-1">
+                <TabsList className="grid w-full grid-cols-6 lg:grid-cols-[repeat(13,minmax(0,1fr))] mb-6 h-auto gap-1">
                   <TabsTrigger value="lookup" className="gap-2 py-3">
                     <GlobeHemisphereWest size={18} weight="duotone" />
                     <span className="hidden sm:inline">Domain</span>
@@ -258,6 +259,10 @@ function App() {
                   <TabsTrigger value="dns" className="gap-2 py-3">
                     <Database size={18} weight="duotone" />
                     <span className="hidden sm:inline">DNS</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="propagation" className="gap-2 py-3">
+                    <Broadcast size={18} weight="duotone" />
+                    <span className="hidden sm:inline">Propagation</span>
                   </TabsTrigger>
                   <TabsTrigger value="robots" className="gap-2 py-3">
                     <Robot size={18} weight="duotone" />
@@ -309,6 +314,10 @@ function App() {
                   <DNSRecords onScanComplete={addToHistory} />
                 </TabsContent>
 
+                <TabsContent value="propagation" className="mt-0">
+                  <DNSPropagationChecker onScanComplete={addToHistory} />
+                </TabsContent>
+
                 <TabsContent value="robots" className="mt-0">
                   <RobotsTxt onScanComplete={addToHistory} />
                 </TabsContent>
@@ -343,6 +352,8 @@ function App() {
                   setActiveTab('subdomain')
                 } else if (scan.type === 'dns') {
                   setActiveTab('dns')
+                } else if (scan.type === 'dns-propagation') {
+                  setActiveTab('propagation')
                 } else if (scan.type === 'robots') {
                   setActiveTab('robots')
                 } else if (scan.type === 'techstack') {

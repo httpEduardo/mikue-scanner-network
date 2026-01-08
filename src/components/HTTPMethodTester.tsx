@@ -1,19 +1,19 @@
 import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/butto
+import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Alert, AlertDescription } from '@/co
+import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { 
+  Sword,
+  CheckCircle,
+  XCircle,
+  Warning
+} from '@phosphor-icons/react'
+import { toast } from 'sonner'
 
-  onScanComplete?:
-
-  method: 
-  statusCo
-  error?: string
-}
-const HTTP_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATC
+const HTTP_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS', 'TRACE', 'CONNECT']
 
 interface HTTPMethodTesterProps {
   onScanComplete?: (scan: any) => void
@@ -28,29 +28,27 @@ interface MethodResult {
   responseTime?: number
 }
 
-        allowed: false,
-
 export default function HTTPMethodTester({ onScanComplete }: HTTPMethodTesterProps) {
   const [testUrl, setTestUrl] = useState('')
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState<MethodResult[]>([])
-    playClickSound()
 
+  const testMethod = async (method: string, targetUrl: string): Promise<MethodResult> => {
     try {
-      if (!targetUrl.startsWith('http:/
-    
-      con
+      const startTime = performance.now()
+      const url = targetUrl.replace(/\/$/, '')
+      
       const response = await fetch(url, {
         method,
-
-
-
+        mode: 'cors',
+      })
       
-          target: targetUrl,
-      
-          tota
-      }
-      playSuccessSound()
+      const endTime = performance.now()
+      const responseTime = Math.round(endTime - startTime)
+
+      return {
+        method,
+        allowed: response.ok || response.status < 500,
         statusCode: response.status,
         statusText: response.statusText,
         responseTime
@@ -61,8 +59,8 @@ export default function HTTPMethodTester({ onScanComplete }: HTTPMethodTesterPro
         allowed: false,
         error: 'Network/CORS Error'
       }
-     
-   
+    }
+  }
 
   const testAllMethods = async () => {
     if (!testUrl.trim()) {
@@ -70,7 +68,6 @@ export default function HTTPMethodTester({ onScanComplete }: HTTPMethodTesterPro
       return
     }
 
-    playClickSound()
     setLoading(true)
     setResults([])
 
@@ -102,51 +99,66 @@ export default function HTTPMethodTester({ onScanComplete }: HTTPMethodTesterPro
         })
       }
 
-      playSuccessSound()
       toast.success(`HTTP methods tested successfully`)
     } catch (err) {
-      playErrorSound()
-
+      toast.error('Failed to test HTTP methods')
     } finally {
-
+      setLoading(false)
     }
   }
 
-
+  const allowedMethods = results.filter(r => r.allowed)
 
   return (
-
+    <Card className="glow-border animate-slide-up">
       <CardHeader>
-
-
-
-        </CardTitle>
-
-
-
-
-
-
-
-
-
-
-
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+            <Sword className="text-primary" size={20} weight="duotone" />
+          </div>
+          <div>
+            <CardTitle className="text-xl">HTTP Method Tester</CardTitle>
+            <CardDescription>Test which HTTP methods are allowed on a target</CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      
+      <CardContent className="space-y-4">
+        <div className="flex gap-2">
+          <Input
+            id="http-method-url"
+            placeholder="https://example.com"
+            value={testUrl}
+            onChange={(e) => setTestUrl(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && !loading && testAllMethods()}
+            disabled={loading}
           />
-
+          <Button 
             onClick={testAllMethods}
+            disabled={loading || !testUrl.trim()}
+            className="gap-2"
+          >
+            {loading ? 'Testing...' : 'Test'}
+          </Button>
+        </div>
 
+        {results.length > 0 && (
+          <div className="space-y-4">
+            <div className="p-4 rounded-lg bg-muted/50 border border-border">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-sm text-muted-foreground">Allowed Methods</p>
+                  <p className="text-2xl font-bold font-display">{allowedMethods.length}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm text-muted-foreground">Total Tested</p>
+                  <p className="text-2xl font-bold font-display">{results.length}</p>
+                </div>
+              </div>
+            </div>
 
-
-
-
-
-
-
-
-
-
-
+            <ScrollArea className="h-[400px] rounded-lg border border-border">
+              <div className="p-4 space-y-2">
                 {results.map((result) => (
                   <div 
                     key={result.method}
@@ -167,23 +179,23 @@ export default function HTTPMethodTester({ onScanComplete }: HTTPMethodTesterPro
                             </div>
                           )}
                         </div>
-
-
-
-
-
-
-
-
-
-
-
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {result.responseTime && (
+                          <span className="text-xs font-mono text-muted-foreground">
+                            {result.responseTime}ms
+                          </span>
+                        )}
+                        {result.allowed ? (
+                          <Badge className="bg-primary/20 text-primary border-primary/30">Allowed</Badge>
+                        ) : (
+                          <Badge variant="secondary">Blocked</Badge>
+                        )}
+                      </div>
                     </div>
-
-
-
-
-
+                    {result.error && (
+                      <p className="text-xs text-destructive">{result.error}</p>
+                    )}
                   </div>
                 ))}
               </div>
@@ -202,6 +214,13 @@ export default function HTTPMethodTester({ onScanComplete }: HTTPMethodTesterPro
                 </AlertDescription>
               </Alert>
             )}
+          </div>
+        )}
+
+        {results.length === 0 && !loading && (
+          <div className="text-center py-12 text-muted-foreground">
+            <Sword size={48} className="mx-auto mb-4 opacity-50" weight="duotone" />
+            <p className="text-sm">Enter a URL to test HTTP methods</p>
           </div>
         )}
       </CardContent>

@@ -52,28 +52,58 @@ export default function DomainLookup({ onScanComplete }: DomainLookupProps) {
     playScanStartSound()
 
     try {
-      const dnsResponse = await fetch(`https://dns.google/resolve?name=${cleanDomain}&type=A`)
-      const dnsData = await dnsResponse.json()
+      let ipAddress = ''
+      let geoData: any = {}
 
-      if (!dnsData.Answer || dnsData.Answer.length === 0) {
-        setError('Could not resolve domain to IP address')
+      try {
+        const dnsResponse = await fetch(`https://cloudflare-dns.com/dns-query?name=${cleanDomain}&type=A`, {
+          headers: {
+            'Accept': 'application/dns-json'
+          }
+        })
+        const dnsData = await dnsResponse.json()
+
+        if (dnsData.Answer && dnsData.Answer.length > 0) {
+          ipAddress = dnsData.Answer[0].data
+        }
+      } catch (dnsError) {
+        console.error('Cloudflare DNS failed, trying alternative:', dnsError)
+        
+        try {
+          const dnsResponse = await fetch(`https://dns.google/resolve?name=${cleanDomain}&type=A`)
+          const dnsData = await dnsResponse.json()
+          
+          if (dnsData.Answer && dnsData.Answer.length > 0) {
+            ipAddress = dnsData.Answer[0].data
+          }
+        } catch (googleError) {
+          console.error('Google DNS failed:', googleError)
+        }
+      }
+
+      if (!ipAddress) {
+        setError('Could not resolve domain to IP address. The domain may not exist or DNS lookup failed.')
         playErrorSound()
         setLoading(false)
         return
       }
 
-      const ipAddress = dnsData.Answer[0].data
-
-      const geoResponse = await fetch(`https://ipapi.co/${ipAddress}/json/`)
-      const geoData = await geoResponse.json()
+      try {
+        const geoResponse = await fetch(`https://ipapi.co/${ipAddress}/json/`)
+        if (geoResponse.ok) {
+          geoData = await geoResponse.json()
+        }
+      } catch (geoError) {
+        console.error('Geo lookup failed:', geoError)
+      }
 
       const lookupResult: LookupResult = {
         domain: cleanDomain,
         ip: ipAddress,
-        country: geoData.country_name,
-        city: geoData.city,
-        isp: geoData.org,
-        org: geoData.org
+        country: geoData.country_name || 'Unknown',
+        city: geoData.city || 'Unknown',
+        isp: geoData.org || 'Unknown',
+        org: geoData.org || 'Unknown'
       }
 
       setResult(lookupResult)
@@ -86,7 +116,8 @@ export default function DomainLookup({ onScanComplete }: DomainLookupProps) {
       playSuccessSound()
       toast.success(`Found IP for ${cleanDomain}!`)
     } catch (err) {
-      setError('Network error occurred. Please try again.')
+      console.error('Lookup error:', err)
+      setError('Network error occurred. Please check your connection and try again.')
       playErrorSound()
     } finally {
       setLoading(false)

@@ -129,7 +129,7 @@ export default function MusicPlayer() {
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6 }}
-        className="fixed bottom-4 left-4 z-50"
+        className="fixed top-4 left-4 z-50"
       >
         <div className="flex items-center gap-2 p-3 rounded-2xl bg-card/80 backdrop-blur-md border border-primary/30 shadow-lg" style={{ boxShadow: '0 0 30px oklch(0.65 0.15 195 / 0.2)' }}>
           <Button

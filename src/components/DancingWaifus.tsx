@@ -249,7 +249,7 @@ export default function DancingWaifus() {
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.8, type: 'spring', bounce: 0.4 }}
-      className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 flex gap-3 p-4 rounded-2xl bg-card/70 backdrop-blur-md border-2 border-primary/40 shadow-2xl"
+      className="fixed bottom-6 left-6 z-30 flex gap-3 p-4 rounded-2xl bg-card/70 backdrop-blur-md border-2 border-primary/40 shadow-2xl"
       style={{ boxShadow: '0 0 50px oklch(0.65 0.15 195 / 0.3), 0 0 100px oklch(0.70 0.20 340 / 0.2)' }}
     >
       {waifus.map((waifu, index) => (

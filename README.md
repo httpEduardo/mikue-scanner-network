@@ -30,4 +30,4 @@ This template intentionally avoids opinionated patterns to give you full flexibi
 
 The Spark Template files and resources are licensed under the MIT License.
 
-Copyright © GitHub, Inc.
+VOID

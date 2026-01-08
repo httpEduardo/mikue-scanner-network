@@ -62,11 +62,11 @@ This is a comprehensive penetration testing toolkit with ten distinct network se
 - **Success criteria**: Shows comprehensive DNS records with visual categorization by record type
 
 ### DNS Propagation Checker
-- **Functionality**: Checks DNS propagation across multiple DNS servers worldwide (Google DNS, Cloudflare, Quad9, OpenDNS, Level3, Comodo, DNS.WATCH, Verisign, AdGuard, CleanBrowsing)
-- **Purpose**: Helps users verify that DNS changes have propagated across different DNS servers globally
+- **Functionality**: Checks DNS propagation across 20 DNS servers worldwide (Google DNS, Cloudflare, Quad9, OpenDNS, Level3, Verisign, Comodo, DNS.WATCH, AdGuard DNS, Yandex DNS, Alternate DNS, FreeDNS, CleanBrowsing, SafeDNS, NextDNS, Neustar, OpenNIC, UncensoredDNS, Hurricane Electric, puntCAT) providing comprehensive global coverage
+- **Purpose**: Helps users verify that DNS changes have propagated across different DNS servers globally with enhanced geographic and provider diversity
 - **Trigger**: User enters a domain, selects record type (A, AAAA, CNAME, MX, TXT), and clicks "Check"
-- **Progression**: Input domain → Select record type → Query 10 different DNS servers simultaneously → Show real-time progress → Display results with status indicators → Calculate propagation percentage → Save to history
-- **Success criteria**: Shows propagation status for each server with response times, identifies mismatches, displays overall propagation percentage
+- **Progression**: Input domain → Select record type → Query 20 different DNS servers simultaneously → Show real-time progress → Display results with status indicators and location badges → Calculate propagation percentage → Save to history
+- **Success criteria**: Shows propagation status for each server with response times, identifies mismatches, displays overall propagation percentage with geographic coverage visualization
 
 ### Robots.txt Analyzer
 - **Functionality**: Fetches and parses robots.txt file to identify crawling rules and restricted paths

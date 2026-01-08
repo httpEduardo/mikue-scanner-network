@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -28,31 +28,28 @@ interface MethodResult {
   responseTime?: number
 }
 
+const HTTP_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD', 'TRACE', 'CONNECT']
+
 export default function HTTPMethodTester({ onScanComplete }: HTTPMethodTesterProps) {
   const [testUrl, setTestUrl] = useState('')
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState<MethodResult[]>([])
-    'GET', 'POST', 'PUT', 'DELETE', 'PATCH', 
+  const { playClickSound, playSuccessSound, playErrorSound } = useSoundEffects()
 
-  const testMethod = asy
+  const testMethod = async (method: string, url: string): Promise<MethodResult> => {
+    const startTime = performance.now()
     
+    try {
       const response = await fetch(url, {
-   
-
-      
         method,
-    
-        r
-    } catch (err) {
-        method,
-        error: 'Netw
-    }
-
-    if (!testUrl.trim()) {
+        mode: 'cors',
+      })
       
-    }
-    playClickSo
-    setResults([])
+      const responseTime = Math.round(performance.now() - startTime)
+      
+      return {
+        method,
+        allowed: true,
         statusCode: response.status,
         statusText: response.statusText,
         responseTime
@@ -69,7 +66,7 @@ export default function HTTPMethodTester({ onScanComplete }: HTTPMethodTesterPro
   const testAllMethods = async () => {
     if (!testUrl.trim()) {
       toast.error('Please enter a URL')
-
+      playErrorSound()
       return
     }
 
@@ -109,89 +106,77 @@ export default function HTTPMethodTester({ onScanComplete }: HTTPMethodTesterPro
       toast.success(`HTTP methods tested successfully`)
     } catch (err) {
       playErrorSound()
-        </Badge>
+      toast.error('Failed to test HTTP methods')
     } finally {
+      setLoading(false)
+    }
+  }
+
+  const getRiskBadge = (method: string, allowed: boolean) => {
+    if (!allowed) return null
+    
+    const highRisk = ['DELETE', 'PUT', 'PATCH', 'TRACE', 'CONNECT']
+    
+    if (highRisk.includes(method)) {
+      return (
+        <Badge variant="destructive" className="text-xs">
+          High Risk
+        </Badge>
+      )
+    }
+    
     return null
-    }
   }
 
-        <CardTitle className="flex items-center gap-3">
-            <Sword size={24} 
-    
-        <CardDescription>
-    
-      <CardContent classNa
-          <Inp
-            placeholder="Enter URL (e.g., https://examp
-            onChange={(e) => setTestUrl(e.target
-            disable
-          />
-       
-    }
-    
-          </Button>
-
-          <div className="space-y-4">
-              <div className="p-4 rounded-lg bg-
-                <div cl
-              <d
-       
-    }
-    
-               
-  }
-
-                      <div className="flex items-center
+  const allowedMethods = results.filter(r => r.allowed)
 
   return (
-                        <div>
+    <Card className="glow-border animate-slide-up">
       <CardHeader>
-                              Status: {result.statusCod
-                          )}
-                      </div>
-                
-                          {r
+        <CardTitle className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+            <Sword size={24} weight="duotone" className="text-primary" />
+          </div>
+          HTTP Method Tester
         </CardTitle>
-                    
-                      {result.responseTime !== undefined && (
-                          
-                   
-                        <div className="t
-                        </div>
-                
-                ))}
-            </ScrollArea>
-            {allowedMethods
-                <Warning size={16} weight="duotone" />
-                  Found {allowedMethods.length} allowed HTTP method{
-                    <span clas
-                    </span>
+        <CardDescription>
+          Test which HTTP methods are allowed by the server (domain or IP)
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="flex gap-3">
+          <Input
+            id="http-method-url"
+            placeholder="Enter URL (e.g., https://example.com or https://8.8.8.8)"
+            value={testUrl}
+            onChange={(e) => setTestUrl(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && testAllMethods()}
+            disabled={loading}
+            className="font-mono"
           />
-            )}
-            onClick={testAllMethods}
-    </Card>
-}
+          <Button 
+            onClick={testAllMethods} 
+            disabled={loading}
+            className="gap-2 min-w-[120px]"
+          >
+            <MagnifyingGlass size={18} weight="duotone" />
+            {loading ? 'Testing...' : 'Test All'}
+          </Button>
+        </div>
 
+        {results.length > 0 && (
+          <div className="space-y-4">
+            <div className="p-4 rounded-lg bg-muted/50 border border-border">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-lg">Test Results</h3>
+                <Badge variant="outline" className="gap-2">
+                  {allowedMethods.length}/{HTTP_METHODS.length} Allowed
+                </Badge>
+              </div>
+            </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            <ScrollArea className="h-[500px] pr-4">
+              <div className="space-y-3">
                 {results.map((result) => (
                   <div 
                     key={result.method}

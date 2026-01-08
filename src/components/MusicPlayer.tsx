@@ -1,13 +1,16 @@
 import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
-import { Play, Pause, SpeakerHigh, SpeakerSlash, MusicNotes } from '@phosphor-icons/react'
+import { Slider } from '@/components/ui/slider'
+import { Play, Pause, SpeakerHigh, SpeakerSlash, MusicNotes, SpeakerLow, SpeakerNone } from '@phosphor-icons/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
+import { useKV } from '@github/spark/hooks'
 
 export default function MusicPlayer() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
-  const [volume, setVolume] = useState(0.5)
+  const [volume, setVolume] = useKV<number>('music-volume', 0.5)
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [showStartButton, setShowStartButton] = useState(true)
 
@@ -15,7 +18,7 @@ export default function MusicPlayer() {
     audioRef.current = new Audio()
     audioRef.current.src = 'https://ia801303.us.archive.org/33/items/hatsune-miku-world-is-mine/Hatsune%20Miku%20-%20World%20is%20Mine.mp3'
     audioRef.current.loop = true
-    audioRef.current.volume = volume
+    audioRef.current.volume = volume ?? 0.5
     
     audioRef.current.addEventListener('error', (e) => {
       console.error('Erro ao carregar áudio:', e)
@@ -74,9 +77,29 @@ export default function MusicPlayer() {
     }
   }
 
+  const handleVolumeChange = (values: number[]) => {
+    const newVolume = values[0]
+    setVolume(newVolume)
+    if (newVolume === 0) {
+      setIsMuted(true)
+    } else if (isMuted) {
+      setIsMuted(false)
+    }
+  }
+
+  const getVolumeIcon = () => {
+    const vol = volume ?? 0.5
+    if (isMuted || vol === 0) return SpeakerSlash
+    if (vol < 0.3) return SpeakerNone
+    if (vol < 0.7) return SpeakerLow
+    return SpeakerHigh
+  }
+
+  const VolumeIcon = getVolumeIcon()
+
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.volume = isMuted ? 0 : volume
+      audioRef.current.volume = isMuted ? 0 : (volume ?? 0.5)
     }
   }, [volume, isMuted])
 
@@ -123,19 +146,47 @@ export default function MusicPlayer() {
             )}
           </Button>
 
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={toggleMute}
-            className="w-10 h-10 rounded-full bg-secondary/20 hover:bg-secondary/30 border border-secondary/40"
-            title={isMuted ? "Ativar Som" : "Desativar Som"}
-          >
-            {isMuted ? (
-              <SpeakerSlash size={20} weight="fill" className="text-secondary" />
-            ) : (
-              <SpeakerHigh size={20} weight="fill" className="text-secondary" />
-            )}
-          </Button>
+          <div className="relative">
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={toggleMute}
+              onMouseEnter={() => setShowVolumeSlider(true)}
+              onMouseLeave={() => setShowVolumeSlider(false)}
+              className="w-10 h-10 rounded-full bg-secondary/20 hover:bg-secondary/30 border border-secondary/40"
+              title={isMuted ? "Ativar Som" : "Desativar Som"}
+            >
+              <VolumeIcon size={20} weight="fill" className="text-secondary" />
+            </Button>
+
+            <AnimatePresence>
+              {showVolumeSlider && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.2 }}
+                  onMouseEnter={() => setShowVolumeSlider(true)}
+                  onMouseLeave={() => setShowVolumeSlider(false)}
+                  className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 p-3 rounded-xl bg-card/95 backdrop-blur-md border border-secondary/30 shadow-xl"
+                  style={{ boxShadow: '0 0 20px oklch(0.75 0.10 210 / 0.3)' }}
+                >
+                  <div className="flex flex-col items-center gap-2 w-10">
+                    <span className="text-xs font-bold text-secondary">{Math.round((volume ?? 0.5) * 100)}%</span>
+                    <Slider
+                      value={[volume ?? 0.5]}
+                      onValueChange={handleVolumeChange}
+                      max={1}
+                      step={0.01}
+                      orientation="vertical"
+                      className="h-24"
+                    />
+                    <SpeakerHigh size={16} className="text-muted-foreground" weight="duotone" />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
           <div className="flex items-center gap-2">
             <MusicNotes size={20} weight="fill" className="text-accent" />

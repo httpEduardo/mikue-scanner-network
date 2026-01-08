@@ -1,25 +1,25 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Progress } from '@/components/ui/progress'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { 
+  GlobeHemisphereWest,
+  CheckCircle,
   XCircle,
-  Warning
-import { t
-interface DNSServer {
-  locatio
-  flag: string
-
+  Warning,
+  ClockCounterClockwise
+} from '@phosphor-icons/react'
+import { toast } from 'sonner'
 
 interface DNSServer {
   name: string
   location: string
-}
+  ip: string
   flag: string
- 
+}
 
 interface PropagationResult {
   server: DNSServer
@@ -53,83 +53,59 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
   const [progress, setProgress] = useState(0)
 
   const checkDNSPropagation = async () => {
-        
+    if (!domain.trim()) {
       toast.error('Please enter a domain name')
-        
+      return
     }
 
     setIsChecking(true)
-        
-        
+    setResults([])
+    setProgress(0)
+    setExpectedValue('')
 
-            resolvedValue = data.Answer[0].data
-          }
-      } catch (error) {
-       
-          error: error instanc
+    const allResults: PropagationResult[] = []
+    let completedChecks = 0
+    let firstResolvedValue = ''
 
-
-      setProgress((complete
-
-    setIsChecking(false)
-    if (onScanComplete) {
+    for (const server of DNS_SERVERS) {
+      const startTime = Date.now()
       
-        rec
-      })
+      try {
+        const response = await fetch(
+          `https://dns.google/resolve?name=${domain}&type=${recordType}`
+        )
+        const data = await response.json()
+        const responseTime = Date.now() - startTime
 
-    toast.success(`DNS propagation ch
-
-    switc
-        
-          Propagated
-      case 'mismatch':
-        
-        </Badge>
-        return <Badge variant="outline" class
-         
-
-          <ClockCounterClockwise size={14}
-        
-  }
-  const 
-  const propagationPercentage = totalCount > 0 ? Mat
-  return (
-      <CardHeader>
-          <GlobeHemisphereWest className="text
-        </CardTitle>
-          Check if your DNS records have pr
-      </CardHeader>
-        <div className="flex gap-2">
-            type="text"
-           
-
-            id="dns-propagation
-          <select
-           
-
-            <option value="AAAA">AAAA</option>
+        if (data.Answer && data.Answer.length > 0) {
+          const resolvedValue = data.Answer[0].data
           
-          </select>
-            disable
-            classNa
-            {isChecking ? (
-                <ClockCo
-           
-              <>
-                Check
-            )}
-        </div>
-        {isChecking && (
-            <div classNa
-           
-         
-        )}
-        {results.length >
-            <div 
-                <p className
+          if (!firstResolvedValue) {
+            firstResolvedValue = resolvedValue
+            setExpectedValue(resolvedValue)
+          }
+
+          allResults.push({
+            server,
+            status: resolvedValue === firstResolvedValue ? 'success' : 'mismatch',
+            ip: resolvedValue,
+            responseTime
+          })
+        } else {
+          allResults.push({
+            server,
+            status: 'failure',
+            responseTime,
+            error: 'No records found'
+          })
+        }
+      } catch (error) {
+        allResults.push({
+          server,
+          status: 'failure',
           error: error instanceof Error ? error.message : 'Unknown error',
           responseTime: 0
-        }
+        })
       }
 
       completedChecks++
@@ -153,7 +129,7 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
   }
 
   const getStatusBadge = (status: PropagationResult['status']) => {
-                     
+    switch (status) {
       case 'success':
         return <Badge variant="outline" className="gap-1 bg-green-500/10 text-green-500 border-green-500/30">
           <CheckCircle size={14} weight="fill" />
@@ -175,7 +151,7 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
           Checking...
         </Badge>
     }
-   
+  }
 
   const successCount = results.filter(r => r.status === 'success').length
   const totalCount = results.length
@@ -183,7 +159,7 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
 
   return (
     <Card className="glow-border animate-slide-up">
-        )}
+      <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <GlobeHemisphereWest className="text-primary" size={24} weight="duotone" />
           DNS Propagation Checker
@@ -191,8 +167,8 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
         <CardDescription>
           Check if your DNS records have propagated across global DNS servers
         </CardDescription>
-
-
+      </CardHeader>
+      <CardContent className="space-y-4">
         <div className="flex gap-2">
           <Input
             type="text"
@@ -200,10 +176,10 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
             placeholder="example.com"
             onChange={(e) => setDomain(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !isChecking && checkDNSPropagation()}
-
+            className="flex-1"
             id="dns-propagation-domain"
-
-
+          />
+          <select
             value={recordType}
             onChange={(e) => setRecordType(e.target.value as any)}
             className="px-4 py-2 rounded-lg border border-input bg-background text-foreground"
@@ -216,14 +192,14 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
           </select>
           <Button 
             disabled={isChecking} 
-
-
+            onClick={checkDNSPropagation}
+            className="gap-2"
           >
-
+            {isChecking ? (
               <>
                 <ClockCounterClockwise size={18} weight="duotone" className="animate-spin" />
                 Checking...
-
+              </>
             ) : (
               <>
                 <GlobeHemisphereWest size={18} weight="duotone" />
@@ -231,17 +207,17 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
               </>
             )}
           </Button>
-
+        </div>
 
         {isChecking && (
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Checking DNS servers...</span>
-
+              <span className="font-mono text-primary">{Math.round(progress)}%</span>
             </div>
             <Progress value={progress} className="h-2" />
           </div>
-
+        )}
 
         {results.length > 0 && (
           <div className="space-y-4">
@@ -249,9 +225,9 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
               <div>
                 <p className="text-sm text-muted-foreground">Propagation Status</p>
                 <p className="text-2xl font-bold text-primary">
-
+                  {successCount}/{totalCount}
                 </p>
-
+              </div>
               <div className="text-right">
                 <p className="text-sm text-muted-foreground">Coverage</p>
                 <p className="font-mono text-sm text-primary font-bold">
@@ -265,15 +241,15 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
                 <p className="text-xs text-muted-foreground mb-1">Expected Value:</p>
                 <p className="font-mono text-sm text-primary break-all">{expectedValue}</p>
               </div>
+            )}
 
-
-
+            <ScrollArea className="h-[500px]">
               <div className="p-4 space-y-2">
                 {results.map((result, index) => (
                   <div 
-
+                    key={index}
                     className="flex items-center gap-4 p-3 rounded-lg bg-card border border-border hover:bg-accent/5 transition-colors"
-
+                  >
                     <div className="flex items-start gap-3 flex-1 min-w-0">
                       <div className="text-2xl shrink-0">{result.server.flag}</div>
                       <div className="flex-1 min-w-0">
@@ -294,7 +270,7 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
                             {result.error}
                           </p>
                         )}
-
+                      </div>
                     </div>
                     {result.responseTime !== undefined && (
                       <div className="text-right shrink-0">
@@ -302,11 +278,11 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
                         <p className="font-mono text-sm font-semibold">{result.responseTime}ms</p>
                       </div>
                     )}
-
+                  </div>
                 ))}
-
+              </div>
             </ScrollArea>
-
+          </div>
         )}
 
         {!isChecking && results.length === 0 && (
@@ -316,6 +292,6 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
           </div>
         )}
       </CardContent>
-
+    </Card>
   )
-
+}

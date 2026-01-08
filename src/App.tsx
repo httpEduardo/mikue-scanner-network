@@ -26,6 +26,8 @@ import DomainLookup from '@/components/DomainLookup'
 import PortScanner from '@/components/PortScanner'
 import NetworkInfo from '@/components/NetworkInfo'
 import ScanHistory from '@/components/ScanHistory'
+import DancingWaifus from '@/components/DancingWaifus'
+import MusicPlayer from '@/components/MusicPlayer'
 
 function App() {
   const [activeTab, setActiveTab] = useState('lookup')
@@ -166,6 +168,9 @@ function App() {
           </svg>
         </div>
       </div>
+      
+      <MusicPlayer />
+      <DancingWaifus />
       
       <div className="relative z-10">
         <header className="border-b border-border/50 backdrop-blur-sm bg-background/80 relative overflow-hidden">

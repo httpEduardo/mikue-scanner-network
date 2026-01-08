@@ -58,7 +58,7 @@ const Waifu = ({ name, colors, delay }: WaifuProps) => {
       animate={{ scale: 1, rotate: 0 }}
       transition={{ delay, duration: 0.6, type: 'spring', bounce: 0.5 }}
       className="relative"
-      style={{ width: '100px', height: '100px' }}
+      style={{ width: '95px', height: '114px' }}
     >
       <svg
         viewBox="0 0 100 120"
@@ -136,7 +136,7 @@ const Waifu = ({ name, colors, delay }: WaifuProps) => {
         )}
       </svg>
 
-      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-[8px] font-bold text-primary whitespace-nowrap" style={{ textShadow: '0 0 4px oklch(0.15 0.02 250)' }}>
+      <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 text-[10px] font-bold text-primary whitespace-nowrap" style={{ textShadow: '0 0 6px oklch(0.15 0.02 250), 0 0 10px oklch(0.65 0.15 195 / 0.5)' }}>
         {name}
       </div>
     </motion.div>
@@ -185,11 +185,11 @@ export default function DancingWaifus() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-      className="fixed bottom-4 right-4 z-50 flex gap-2 p-3 rounded-2xl bg-card/80 backdrop-blur-md border border-primary/30 shadow-lg"
-      style={{ boxShadow: '0 0 30px oklch(0.65 0.15 195 / 0.2)' }}
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.8, type: 'spring', bounce: 0.4 }}
+      className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 flex gap-3 p-4 rounded-2xl bg-card/70 backdrop-blur-md border-2 border-primary/40 shadow-2xl"
+      style={{ boxShadow: '0 0 50px oklch(0.65 0.15 195 / 0.3), 0 0 100px oklch(0.70 0.20 340 / 0.2)' }}
     >
       {waifus.map((waifu, index) => (
         <Waifu key={waifu.name} {...waifu} delay={index * 0.15} />

@@ -8,7 +8,7 @@ A playful Hatsune Miku-themed network utility dashboard where Miku assists users
 3. **Interactive** - Features responsive animations and delightful micro-interactions that make technical tasks feel engaging
 
 **Complexity Level**: Complex Application (advanced functionality with multiple views)
-This is a comprehensive penetration testing toolkit with seven distinct network security tools that maintain state, provide real-time feedback, and require sophisticated data handling across multiple scanning methodologies.
+This is a comprehensive penetration testing toolkit with ten distinct network security tools that maintain state, provide real-time feedback, and require sophisticated data handling across multiple scanning methodologies.
 
 ## Essential Features
 
@@ -53,6 +53,27 @@ This is a comprehensive penetration testing toolkit with seven distinct network 
 - **Trigger**: User enters a domain and clicks "Scan"
 - **Progression**: Input domain → Test common subdomains (www, mail, api, admin, etc.) → Display active subdomains with IP addresses → Show progress bar → Save to history
 - **Success criteria**: Shows list of discovered active subdomains with their resolved IP addresses
+
+### DNS Records Lookup
+- **Functionality**: Retrieves all DNS records (A, AAAA, MX, TXT, NS, CNAME, SOA) for a domain
+- **Purpose**: Provides complete DNS configuration visibility for security assessment
+- **Trigger**: User enters a domain and clicks "Lookup"
+- **Progression**: Input domain → Query Google DNS API for all record types → Display records grouped by type with TTL values → Save to history
+- **Success criteria**: Shows comprehensive DNS records with visual categorization by record type
+
+### Robots.txt Analyzer
+- **Functionality**: Fetches and parses robots.txt file to identify crawling rules and restricted paths
+- **Purpose**: Reveals potentially sensitive directories and sitemap locations
+- **Trigger**: User enters a domain and clicks "Check"
+- **Progression**: Input domain → Fetch robots.txt → Parse disallowed paths, allowed paths, sitemaps → Display organized results → Save to history
+- **Success criteria**: Shows parsed robots.txt with highlighted sitemaps and restricted paths, handles missing files gracefully
+
+### Technology Stack Detector
+- **Functionality**: Analyzes HTML, headers, and response patterns to identify technologies used by a website
+- **Purpose**: Helps users understand the technology stack for vulnerability research
+- **Trigger**: User enters a domain and clicks "Detect"
+- **Progression**: Input domain → Fetch page and analyze headers → Detect frameworks, libraries, CMS, servers, CDN → Display with confidence levels → Save to history
+- **Success criteria**: Shows detected technologies with categories (Frontend, Backend, Server, CDN) and confidence ratings
 
 ### Network Info Dashboard
 - **Functionality**: Displays information about the user's own connection
@@ -121,10 +142,10 @@ Animations should feel snappy and cyberpunk-inspired with glowing effects and el
 
 - **Components**:
   - `Card` - Main container for each utility tool, with dark background and subtle teal border glow
-  - `Tabs` - Switch between different network tools (Domain Lookup, Port Scanner, SSL Checker, Headers Analyzer, WHOIS, Subdomain Finder, My Network)
+  - `Tabs` - Switch between different network tools (Domain Lookup, Port Scanner, SSL Checker, Headers Analyzer, WHOIS, Subdomain Finder, DNS Records, Robots.txt, Tech Stack, My Network)
   - `Input` - Text fields for domain/IP/URL entry, with focus glow effect
   - `Button` - Primary actions with gradient hover states and loading spinners
-  - `Badge` - Status indicators for ports (open/closed), SSL validity, security scores, styled with appropriate colors
+  - `Badge` - Status indicators for ports (open/closed), SSL validity, security scores, DNS record types, confidence levels, styled with appropriate colors
   - `ScrollArea` - History sidebar and long result lists with smooth scrolling
   - `Separator` - Dividers between sections with subtle teal glow
   - `Progress` - Loading bars for scan progress with animated gradient
@@ -149,6 +170,9 @@ Animations should feel snappy and cyberpunk-inspired with glowing effects and el
   - `Article` - HTTP headers analyzer tool
   - `IdentificationCard` - WHOIS lookup tool
   - `Tree` - Subdomain finder tool
+  - `Database` - DNS records lookup tool
+  - `Robot` - Robots.txt analyzer tool
+  - `Code` - Technology stack detector tool
   - `WifiHigh` - Network info
   - `ClockCounterClockwise` - History sidebar
   - `MagnifyingGlass` - Search/scan action

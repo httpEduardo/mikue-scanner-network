@@ -22,7 +22,10 @@ import {
   ShieldCheck,
   Article,
   IdentificationCard,
-  Tree
+  Tree,
+  Database,
+  Robot,
+  Code
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import MikuCharacter from '@/components/MikuCharacter'
@@ -35,6 +38,9 @@ import SSLChecker from '@/components/SSLChecker'
 import HeadersAnalyzer from '@/components/HeadersAnalyzer'
 import WhoisLookup from '@/components/WhoisLookup'
 import SubdomainFinder from '@/components/SubdomainFinder'
+import DNSRecords from '@/components/DNSRecords'
+import RobotsTxt from '@/components/RobotsTxt'
+import TechStack from '@/components/TechStack'
 
 function App() {
   const [activeTab, setActiveTab] = useState('lookup')
@@ -212,7 +218,7 @@ function App() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-3">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-7 mb-6 h-auto">
+                <TabsList className="grid w-full grid-cols-5 lg:grid-cols-10 mb-6 h-auto gap-1">
                   <TabsTrigger value="lookup" className="gap-2 py-3">
                     <GlobeHemisphereWest size={18} weight="duotone" />
                     <span className="hidden sm:inline">Domain</span>
@@ -236,6 +242,18 @@ function App() {
                   <TabsTrigger value="subdomain" className="gap-2 py-3">
                     <Tree size={18} weight="duotone" />
                     <span className="hidden sm:inline">Subdomain</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="dns" className="gap-2 py-3">
+                    <Database size={18} weight="duotone" />
+                    <span className="hidden sm:inline">DNS</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="robots" className="gap-2 py-3">
+                    <Robot size={18} weight="duotone" />
+                    <span className="hidden sm:inline">Robots</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="tech" className="gap-2 py-3">
+                    <Code size={18} weight="duotone" />
+                    <span className="hidden sm:inline">Tech</span>
                   </TabsTrigger>
                   <TabsTrigger value="network" className="gap-2 py-3">
                     <WifiHigh size={18} weight="duotone" />
@@ -267,6 +285,18 @@ function App() {
                   <SubdomainFinder onScanComplete={addToHistory} />
                 </TabsContent>
 
+                <TabsContent value="dns" className="mt-0">
+                  <DNSRecords onScanComplete={addToHistory} />
+                </TabsContent>
+
+                <TabsContent value="robots" className="mt-0">
+                  <RobotsTxt onScanComplete={addToHistory} />
+                </TabsContent>
+
+                <TabsContent value="tech" className="mt-0">
+                  <TechStack onScanComplete={addToHistory} />
+                </TabsContent>
+
                 <TabsContent value="network" className="mt-0">
                   <NetworkInfo />
                 </TabsContent>
@@ -287,6 +317,12 @@ function App() {
                   setActiveTab('whois')
                 } else if (scan.type === 'subdomain') {
                   setActiveTab('subdomain')
+                } else if (scan.type === 'dns') {
+                  setActiveTab('dns')
+                } else if (scan.type === 'robots') {
+                  setActiveTab('robots')
+                } else if (scan.type === 'techstack') {
+                  setActiveTab('tech')
                 }
                 toast.info('Scan loaded from history')
               }} />

@@ -27,7 +27,6 @@ import PortScanner from '@/components/PortScanner'
 import NetworkInfo from '@/components/NetworkInfo'
 import ScanHistory from '@/components/ScanHistory'
 import DancingWaifus from '@/components/DancingWaifus'
-import MusicPlayer from '@/components/MusicPlayer'
 
 function App() {
   const [activeTab, setActiveTab] = useState('lookup')
@@ -169,7 +168,6 @@ function App() {
         </div>
       </div>
       
-      <MusicPlayer />
       <DancingWaifus />
       
       <div className="relative z-10">

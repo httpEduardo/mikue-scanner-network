@@ -1,20 +1,20 @@
 import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Separator } from '@/components/ui/separator'
+import { ScrollArea } from '@/components/ui/scr
 import { 
-  Sword,
   MagnifyingGlass,
-  CheckCircle,
   XCircle,
-  Warning,
   ShieldCheck,
-  ShieldWarning
-} from '@phosphor-icons/react'
+} from '@
+import {
+interface HTTPMeth
+}
+interface 
+  allowed:
+  statusText?:
+  responseTime?
+
 import { toast } from 'sonner'
 import { useSoundEffects } from '@/hooks/use-sound-effects'
 
@@ -31,186 +31,186 @@ interface MethodResult {
   responseTime?: number
 }
 
-const HTTP_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS', 'TRACE', 'CONNECT']
+          allowed: false,
 
-export default function HTTPMethodTester({ onScanComplete }: HTTPMethodTesterProps) {
-  const [testUrl, setTestUrl] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [results, setResults] = useState<MethodResult[]>([])
-  const { playClickSound, playSuccessSound, playErrorSound } = useSoundEffects()
+      return {
+        allowed: false,
+      }
+  }
+  const testAllMethods = async () => {
 
-  const testMethod = async (method: string, url: string): Promise<MethodResult> => {
-    const startTime = performance.now()
-    try {
-      const response = await fetch(url, {
-        method,
-        mode: 'cors',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      return
+
+      toa
+      return
+
+    setLoading(true)
+    
+      const methodResults: MethodResult[] = [
+      
       })
       
-      const endTime = performance.now()
-      const responseTime = Math.round(endTime - startTime)
+        if (result.allowed) {
+        }
 
-      return {
-        method,
-        allowed: response.ok || response.status < 500,
-        statusCode: response.status,
-        statusText: response.statusText,
-        responseTime,
+        onScan
+          targe
+          allowedCount: allowed.length,
       }
-    } catch (error: any) {
-      if (error.message.includes('Failed to fetch')) {
-        return {
+      playSuccessSound()
+    } catch (err) {
+      }
+      setLoading(false)
+  }
+  const getRiskB
           method,
-          allowed: false,
+    const sensitiveMethod
           error: 'Network/CORS Error',
         }
-      }
-      return {
+      <
+    
         method,
-        allowed: false,
-        error: error.message || 'Unknown error',
-      }
+        Moderate Risk
     }
+    ret
+
   }
 
   const testAllMethods = async () => {
-    if (!testUrl.trim()) {
-      toast.error('Please enter a URL')
-      playErrorSound()
+            <Sword size={2
+          HTTP Method Tester
+        <CardDescripti
       return
     }
 
-    if (!testUrl.startsWith('http://') && !testUrl.startsWith('https://')) {
-      toast.error('URL must start with http:// or https://')
-      playErrorSound()
-      return
-    }
+            placeholder="Enter URL (e.g., https://example.com or https://8.8
+            onChange={(e) => setTestUrl(e.target.value)}
+            disabled={
+          />
+     
 
-    playClickSound()
-    setLoading(true)
-    setResults([])
+            <Magnify
+          </Button>
+
     
     try {
-      const methodResults: MethodResult[] = []
+                  <div className="text-xs text
       const allowed: string[] = []
       
-      for (const method of HTTP_METHODS) {
-        const result = await testMethod(method, testUrl)
-        methodResults.push(result)
-        setResults([...methodResults])
+                      {allowedMethods.leng
+                    <Badge variant="secondary" className
+                      {results.len
+                  </div>
         
-        if (result.allowed) {
-          allowed.push(method)
+
+
         }
       }
 
-      if (onScanComplete) {
-        onScanComplete({
-          type: 'http-methods',
-          target: testUrl,
+                          <
+                        
+                          }`}>
+                          
           allowedMethods: allowed,
-          allowedCount: allowed.length,
-        })
-      }
+                          </div>
+          
+       
       
       playSuccessSound()
-      toast.success(`Test complete! ${allowed.length} methods allowed`)
-    } catch (err) {
-      playErrorSound()
-      toast.error('Failed to test methods')
+                              )}
+                   
+                      
+                                <div classN
     } finally {
-      setLoading(false)
+                       
     }
   }
 
-  const getRiskBadge = (method: string, allowed: boolean) => {
-    if (!allowed) return null
+                                  <Warning size={14} weight="d
+                             
     
-    const dangerousMethods = ['TRACE', 'CONNECT', 'DELETE']
-    const sensitiveMethods = ['PUT', 'PATCH']
+                                <div className="flex items-
+                                  <span class
     
-    if (dangerousMethods.includes(method)) {
-      return <Badge variant="destructive" className="gap-1">
-        <Warning size={12} weight="duotone" />
-        High Risk
-      </Badge>
+                          </div>
+                      </div>
+                  </Card>
+              </d
+
     }
     
-    if (sensitiveMethods.includes(method)) {
-      return <Badge variant="secondary" className="gap-1">
-        <ShieldWarning size={12} weight="duotone" />
-        Moderate Risk
-      </Badge>
+                    <li>Only enable methods 
+                    <li>Implement proper authentication fo
+                  </ul>
+              </Alert
+          </di
     }
-    
-    return null
+  )
+
   }
 
-  const allowedMethods = results.filter(r => r.allowed)
+
 
   return (
-    <Card className="glow-border animate-slide-up">
+
       <CardHeader>
-        <CardTitle className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-            <Sword size={24} weight="duotone" className="text-primary" />
-          </div>
-          HTTP Method Tester
+
+
+
+
+
         </CardTitle>
-        <CardDescription>
-          Test which HTTP methods are allowed on a target URL (domain or IP)
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="flex gap-3">
-          <Input
-            id="http-method-url"
-            placeholder="Enter URL (e.g., https://example.com or https://8.8.8.8)"
-            value={testUrl}
-            onChange={(e) => setTestUrl(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && testAllMethods()}
-            disabled={loading}
-            className="font-mono"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           />
-          <Button 
+
             onClick={testAllMethods} 
-            disabled={loading}
-            className="gap-2 min-w-[120px]"
-          >
-            <MagnifyingGlass size={18} weight="duotone" />
-            {loading ? 'Testing...' : 'Test All'}
-          </Button>
-        </div>
 
-        {results.length > 0 && (
-          <div className="space-y-4">
-            <Alert>
-              <AlertDescription>
-                <div className="flex items-center justify-between flex-wrap gap-2">
-                  <div className="text-xs text-muted-foreground">
-                    Testing {HTTP_METHODS.length} HTTP methods...
-                  </div>
-                  <div className="flex gap-2">
-                    <Badge variant="default" className="gap-1">
-                      <CheckCircle size={12} weight="duotone" />
-                      {allowedMethods.length} Allowed
-                    </Badge>
-                    <Badge variant="secondary" className="gap-1">
-                      <XCircle size={12} weight="duotone" />
-                      {results.length - allowedMethods.length} Blocked
-                    </Badge>
-                  </div>
-                </div>
-              </AlertDescription>
-            </Alert>
 
-            <Separator />
 
-            <ScrollArea className="h-[500px] pr-4">
-              <div className="space-y-3">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 {results.map((result, index) => (
                   <Card key={index} className="bg-card/30">
                     <CardContent className="pt-4">

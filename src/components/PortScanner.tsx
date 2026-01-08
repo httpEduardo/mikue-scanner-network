@@ -186,6 +186,7 @@ export default function PortScanner({ onScanComplete }: PortScannerProps) {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
           >
             <Card className="glow-border bg-card/50 backdrop-blur">
               <CardHeader>
@@ -236,6 +237,12 @@ export default function PortScanner({ onScanComplete }: PortScannerProps) {
                 </div>
               </CardContent>
             </Card>
+            
+            {!loading && (
+              <div className="flex justify-center">
+                <MikuCharacter mood="success" size="medium" />
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

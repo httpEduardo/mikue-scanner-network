@@ -151,6 +151,7 @@ export default function DomainLookup({ onScanComplete }: DomainLookupProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
+            className="space-y-6"
           >
             <Card className="glow-border bg-card/50 backdrop-blur">
               <CardHeader>
@@ -190,6 +191,10 @@ export default function DomainLookup({ onScanComplete }: DomainLookupProps) {
                 </div>
               </CardContent>
             </Card>
+            
+            <div className="flex justify-center">
+              <MikuCharacter mood="success" size="medium" />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

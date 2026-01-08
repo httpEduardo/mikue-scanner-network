@@ -166,6 +166,10 @@ export default function NetworkInfo() {
                 Connected and ready to scan networks!
               </p>
             </div>
+
+            <div className="flex justify-center pt-4">
+              <MikuCharacter mood="success" size="large" />
+            </div>
           </CardContent>
         </Card>
       </motion.div>

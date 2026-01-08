@@ -26,7 +26,8 @@ import {
   Database,
   Robot,
   Code,
-  Sword
+  Sword,
+  ShieldSlash
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import MikuCharacter from '@/components/MikuCharacter'
@@ -43,6 +44,7 @@ import DNSRecords from '@/components/DNSRecords'
 import RobotsTxt from '@/components/RobotsTxt'
 import TechStack from '@/components/TechStack'
 import HTTPMethodTester from '@/components/HTTPMethodTester'
+import CORSAnalyzer from '@/components/CORSAnalyzer'
 
 function App() {
   const [activeTab, setActiveTab] = useState('lookup')
@@ -220,7 +222,7 @@ function App() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-3">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-5 lg:grid-cols-11 mb-6 h-auto gap-1">
+                <TabsList className="grid w-full grid-cols-6 lg:grid-cols-12 mb-6 h-auto gap-1">
                   <TabsTrigger value="lookup" className="gap-2 py-3">
                     <GlobeHemisphereWest size={18} weight="duotone" />
                     <span className="hidden sm:inline">Domain</span>
@@ -240,6 +242,10 @@ function App() {
                   <TabsTrigger value="methods" className="gap-2 py-3">
                     <Sword size={18} weight="duotone" />
                     <span className="hidden sm:inline">Methods</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="cors" className="gap-2 py-3">
+                    <ShieldSlash size={18} weight="duotone" />
+                    <span className="hidden sm:inline">CORS</span>
                   </TabsTrigger>
                   <TabsTrigger value="whois" className="gap-2 py-3">
                     <IdentificationCard size={18} weight="duotone" />
@@ -287,6 +293,10 @@ function App() {
                   <HTTPMethodTester onScanComplete={addToHistory} />
                 </TabsContent>
 
+                <TabsContent value="cors" className="mt-0">
+                  <CORSAnalyzer onScanComplete={addToHistory} />
+                </TabsContent>
+
                 <TabsContent value="whois" className="mt-0">
                   <WhoisLookup onScanComplete={addToHistory} />
                 </TabsContent>
@@ -325,6 +335,8 @@ function App() {
                   setActiveTab('headers')
                 } else if (scan.type === 'http-methods') {
                   setActiveTab('methods')
+                } else if (scan.type === 'cors') {
+                  setActiveTab('cors')
                 } else if (scan.type === 'whois') {
                   setActiveTab('whois')
                 } else if (scan.type === 'subdomain') {

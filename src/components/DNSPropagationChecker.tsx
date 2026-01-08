@@ -3,15 +3,13 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { 
-  Warning,
+import { 
   CheckCircle, 
   XCircle,
   ClockCounterClockwise,
-  GlobeHemisphereWest
-} from '@phosphor-icons/react'
+} from '@phosphor-ico
+
 import { toast } from 'sonner'
 
 interface DNSServer {
@@ -26,7 +24,7 @@ interface PropagationResult {
   ip?: string
   responseTime?: number
   error?: string
-}
+} { name: 'Cloudflare', provider: '1.1.1.1', location: 'Global' },
 
 const DNS_SERVERS: DNSServer[] = [
   { name: 'Google Public DNS', provider: '8.8.8.8', location: 'Global' },
@@ -39,8 +37,6 @@ const DNS_SERVERS: DNSServer[] = [
   { name: 'AdGuard DNS', provider: '94.140.14.14', location: 'Global' }
 ]
 
-export default function DNSPropagationChecker({ onScanComplete }: { onScanComplete?: (scan: any) => void }) {
-  const [domain, setDomain] = useState('')
   const [recordType, setRecordType] = useState<'A' | 'AAAA' | 'CNAME' | 'MX'>('A')
   const [results, setResults] = useState<PropagationResult[]>([])
   const [isChecking, setIsChecking] = useState(false)

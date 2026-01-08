@@ -14,19 +14,17 @@ import {
   Minus,
   ArrowRight,
   Warning,
-  Info
+  Info,
+  FileCsv,
+  FileImage
 } from '@phosphor-icons/react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
 import type { ScanJob, SecurityHeadersResult } from '@/lib/types';
+import { exportToCSV, exportToPDF, type ExportData, type ComparisonHeader } from '@/lib/export';
 
 interface HeadersComparisonProps {
   scans: ScanJob[];
-}
-
-interface ComparisonHeader {
-  name: string;
-  status: 'added' | 'removed' | 'unchanged' | 'changed';
-  values: (string | undefined)[];
 }
 
 const HEADER_DISPLAY_NAMES: Record<string, string> = {
@@ -187,6 +185,44 @@ export default function HeadersComparison({ scans }: HeadersComparisonProps) {
     setShowComparison(false);
     setSelectedScanIds([]);
     setSelectedTarget('');
+  };
+
+  const handleExportCSV = () => {
+    if (!comparisonData || !stats) return;
+    
+    const exportData: ExportData = {
+      target: selectedTarget,
+      scans: selectedScans,
+      comparison: comparisonData,
+      stats
+    };
+    
+    try {
+      exportToCSV(exportData);
+      toast.success('CSV report exported successfully');
+    } catch (error) {
+      toast.error('Failed to export CSV report');
+      console.error(error);
+    }
+  };
+
+  const handleExportPDF = () => {
+    if (!comparisonData || !stats) return;
+    
+    const exportData: ExportData = {
+      target: selectedTarget,
+      scans: selectedScans,
+      comparison: comparisonData,
+      stats
+    };
+    
+    try {
+      exportToPDF(exportData);
+      toast.success('PDF report exported successfully');
+    } catch (error) {
+      toast.error('Failed to export PDF report');
+      console.error(error);
+    }
   };
 
   if (headerScans.length === 0) {
@@ -350,22 +386,44 @@ export default function HeadersComparison({ scans }: HeadersComparisonProps) {
                       {selectedTarget} • {selectedScans.length} scans
                     </CardDescription>
                   </div>
-                  <div className="flex gap-2">
-                    {stats.added > 0 && (
-                      <Badge className="bg-success/10 text-success border-success/30">
-                        +{stats.added} Added
-                      </Badge>
-                    )}
-                    {stats.changed > 0 && (
-                      <Badge className="bg-warning/10 text-warning border-warning/30">
-                        {stats.changed} Changed
-                      </Badge>
-                    )}
-                    {stats.removed > 0 && (
-                      <Badge variant="destructive">
-                        -{stats.removed} Removed
-                      </Badge>
-                    )}
+                  <div className="flex items-center gap-3">
+                    <div className="flex gap-2">
+                      {stats.added > 0 && (
+                        <Badge className="bg-success/10 text-success border-success/30">
+                          +{stats.added} Added
+                        </Badge>
+                      )}
+                      {stats.changed > 0 && (
+                        <Badge className="bg-warning/10 text-warning border-warning/30">
+                          {stats.changed} Changed
+                        </Badge>
+                      )}
+                      {stats.removed > 0 && (
+                        <Badge variant="destructive">
+                          -{stats.removed} Removed
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="flex gap-2 ml-2 pl-2 border-l border-border">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleExportCSV}
+                        className="gap-2"
+                      >
+                        <FileCsv size={16} weight="duotone" />
+                        CSV
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleExportPDF}
+                        className="gap-2"
+                      >
+                        <FileImage size={16} weight="duotone" />
+                        PDF
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </CardHeader>

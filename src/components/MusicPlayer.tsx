@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Play, Pause, SpeakerHigh, SpeakerSlash, YoutubeLogo } from '@phosphor-icons/react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -7,26 +7,43 @@ export default function MusicPlayer() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [showPlayer, setShowPlayer] = useState(false)
-  const iframeRef = useRef<HTMLIFrameElement | null>(null)
+  const [playerReady, setPlayerReady] = useState(false)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  useEffect(() => {
+    audioRef.current = new Audio('https://archive.org/download/hatsune-miku-world-is-mine/Hatsune%20Miku%20-%20World%20Is%20Mine.mp3')
+    audioRef.current.loop = true
+    audioRef.current.volume = 0.6
+    setPlayerReady(true)
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current = null
+      }
+    }
+  }, [])
 
   const togglePlay = () => {
-    if (!iframeRef.current) return
+    if (!audioRef.current || !playerReady) return
 
     if (isPlaying) {
-      iframeRef.current.contentWindow?.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*')
+      audioRef.current.pause()
     } else {
-      iframeRef.current.contentWindow?.postMessage('{"event":"command","func":"playVideo","args":""}', '*')
+      audioRef.current.play().catch(error => {
+        console.error('Erro ao reproduzir áudio:', error)
+      })
     }
     setIsPlaying(!isPlaying)
   }
 
   const toggleMute = () => {
-    if (!iframeRef.current) return
+    if (!audioRef.current) return
     
     if (isMuted) {
-      iframeRef.current.contentWindow?.postMessage('{"event":"command","func":"unMute","args":""}', '*')
+      audioRef.current.volume = 0.6
     } else {
-      iframeRef.current.contentWindow?.postMessage('{"event":"command","func":"mute","args":""}', '*')
+      audioRef.current.volume = 0
     }
     setIsMuted(!isMuted)
   }
@@ -37,16 +54,6 @@ export default function MusicPlayer() {
 
   return (
     <>
-      <iframe
-        ref={iframeRef}
-        className="fixed pointer-events-none opacity-0"
-        width="0"
-        height="0"
-        src="https://www.youtube.com/embed/LaEgpNBt-bQ?enablejsapi=1&autoplay=0&loop=1&playlist=LaEgpNBt-bQ"
-        allow="autoplay; encrypted-media"
-        title="World is Mine - Hatsune Miku"
-      />
-
       <motion.div
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}

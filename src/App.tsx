@@ -35,7 +35,7 @@ import DomainLookup from '@/components/DomainLookup'
 import PortScanner from '@/components/PortScanner'
 import NetworkInfo from '@/components/NetworkInfo'
 import ScanHistory from '@/components/ScanHistory'
-import DancingWaifus from '@/components/DancingWaifus'
+import Running3DCats from '@/components/Running3DCats'
 import SSLChecker from '@/components/SSLChecker'
 import HeadersAnalyzer from '@/components/HeadersAnalyzer'
 import WhoisLookup from '@/components/WhoisLookup'
@@ -187,7 +187,7 @@ function App() {
         </div>
       </div>
       
-      <DancingWaifus />
+      <Running3DCats />
       
       <div className="relative z-10">
         <header className="border-b border-border/50 backdrop-blur-sm bg-background/80 relative overflow-hidden">

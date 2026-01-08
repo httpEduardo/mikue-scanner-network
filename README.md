@@ -1,23 +1,33 @@
-# ✨ Welcome to Your Spark Template!
-You've just launched your brand-new Spark Template Codespace — everything’s fired up and ready for you to explore, build, and create with Spark!
+# Spark Template
 
-This template is your blank canvas. It comes with a minimal setup to help you get started quickly with Spark development.
+This repository provides a minimal Spark template designed to help you start developing, testing, and scaling Spark applications quickly and efficiently.
 
-🚀 What's Inside?
-- A clean, minimal Spark environment
-- Pre-configured for local development
-- Ready to scale with your ideas
-  
-🧠 What Can You Do?
+## Overview
 
-Right now, this is just a starting point — the perfect place to begin building and testing your Spark applications.
+The Spark Template serves as a clean starting point for new projects. It includes only the essential setup required to run Spark in a local development environment, allowing you to focus on building your application logic without unnecessary overhead.
 
-🧹 Just Exploring?
-No problem! If you were just checking things out and don’t need to keep this code:
+## What’s Included
 
-- Simply delete your Spark.
-- Everything will be cleaned up — no traces left behind.
+- Minimal and clean Spark project structure  
+- Pre-configured environment for local development  
+- Ready to be extended and scaled according to your needs  
 
-📄 License For Spark Template Resources 
+## Getting Started
 
-The Spark Template files and resources from GitHub are licensed under the terms of the MIT license, Copyright GitHub, Inc.
+1. Open the repository in your Codespace or local environment.
+2. Review the existing structure to understand the baseline setup.
+3. Start adding your Spark jobs, configurations, and dependencies as required.
+
+This template intentionally avoids opinionated patterns to give you full flexibility in defining your architecture.
+
+## Usage Notes
+
+- This repository is intended as a starting point, not a finished solution.
+- You are free to modify, extend, or restructure it to fit your project requirements.
+- If you are only exploring and do not intend to continue, you can safely delete the repository. No residual resources will remain.
+
+## License
+
+The Spark Template files and resources are licensed under the MIT License.
+
+Copyright © GitHub, Inc.

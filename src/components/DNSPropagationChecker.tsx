@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Input } from '@/components/ui/input'
-import { ScrollArea } from '@/components/ui/s
-import { Progress } from '@/components/ui/progr
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
@@ -14,39 +14,41 @@ import { useSoundEffects } from '@/hooks/use-sound-effects'
 
 interface DNSServer {
   name: string
+  provider: string
+  location: string
+  ip: string
+}
 
-  { name: 'Cloudfl
-  { name: 'Q
- 
-
-  { name: 'Hurricane Electric', pr
+const DNS_SERVERS: DNSServer[] = [
+  { name: 'Cloudflare Primary', provider: 'Cloudflare', location: 'Global', ip: '1.1.1.1' },
+  { name: 'Cloudflare Secondary', provider: 'Cloudflare', location: 'Global', ip: '1.0.0.1' },
+  { name: 'Google Primary', provider: 'Google', location: 'Global', ip: '8.8.8.8' },
+  { name: 'Google Secondary', provider: 'Google', location: 'Global', ip: '8.8.4.4' },
+  { name: 'Quad9', provider: 'Quad9', location: 'Global', ip: '9.9.9.9' },
+  { name: 'OpenDNS Primary', provider: 'Cisco', location: 'Global', ip: '208.67.222.222' },
+  { name: 'OpenDNS Secondary', provider: 'Cisco', location: 'Global', ip: '208.67.220.220' },
+  { name: 'Level3', provider: 'Level3', location: 'US', ip: '209.244.0.3' },
+  { name: 'Verisign', provider: 'Verisign', location: 'US', ip: '64.6.64.6' },
+  { name: 'DNS.WATCH', provider: 'DNS.WATCH', location: 'Germany', ip: '84.200.69.80' },
+  { name: 'Comodo Secure', provider: 'Comodo', location: 'Global', ip: '8.26.56.26' },
+  { name: 'Hurricane Electric', provider: 'HE', location: 'US', ip: '74.82.42.42' },
 ]
+
 interface PropagationResult {
+  server: DNSServer
   status: 'checking' | 'success' | 'failed' | 'mismatch'
+  value?: string
   responseTime?: number
+  error?: string
 }
+
 interface DNSPropagationCheckerProps {
+  onScanComplete?: (scan: any) => void
 }
-export default function DNSPropagationChecker({ onScanComplete }: DNSPropagationChec
+
+export default function DNSPropagationChecker({ onScanComplete }: DNSPropagationCheckerProps) {
+  const [domain, setDomain] = useState('')
   const [recordType, setRecordType] = useState('A')
-  const [results, setResults] = useState<PropagationResult[]>([])
- 
-
-    if (!domain.trim()) {
-      return
-
-    
-    setResults(DNS_SERV
-      status: 'c
- 
-
-    const allResults: PropagationResul
-
- 
-
-      try {
-        const mockIp = `${Math.floor(Math.
-        if (firstResolvedValue === '') {
   const [isChecking, setIsChecking] = useState(false)
   const [results, setResults] = useState<PropagationResult[]>([])
   const [progress, setProgress] = useState(0)
@@ -204,15 +206,15 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
                 <>
                   <Clock size={18} weight="duotone" className="animate-spin" />
                   Checking...
-          >
+                </>
               ) : (
-                <d
+                <>
                   <MagnifyingGlass size={18} weight="duotone" />
                   Check
                 </>
-                
+              )}
             </Button>
-                
+          </div>
 
           {isChecking && (
             <div className="space-y-2">
@@ -221,30 +223,32 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
                 Checking DNS propagation across {DNS_SERVERS.length} servers...
               </p>
             </div>
-            
+          )}
         </CardContent>
       </Card>
 
       <AnimatePresence mode="wait">
         {results.length === 0 && !isChecking && (
-                     
+          <motion.div
+            key="empty"
             initial={{ opacity: 0, y: 20 }}
-                                <p classNa
+            animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             className="text-center py-12"
           >
             <MikuCharacter mood="happy" size="large" />
             <p className="mt-4 text-muted-foreground">Enter a domain name to check DNS propagation</p>
           </motion.div>
-          
+        )}
 
         {results.length > 0 && (
           <motion.div
-                              <p className=
+            key="results"
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-                          )}
+            exit={{ opacity: 0, y: -20 }}
           >
-                    ))}
+            <Card className="glow-border bg-card/50 backdrop-blur">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2">
@@ -259,7 +263,7 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
                   <CardDescription className="font-mono">
                     Expected: {expectedValue}
                   </CardDescription>
-
+                )}
               </CardHeader>
               <CardContent>
                 <ScrollArea className="h-[500px] pr-4">
@@ -285,7 +289,7 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
                                   {result.server.provider} • {result.server.location}
                                 </p>
                               </div>
-
+                            </div>
                             {result.value && (
                               <div className="pl-1">
                                 <p className="text-sm font-mono text-primary">{result.value}</p>
@@ -301,16 +305,16 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
                               <p className="text-sm font-mono">{result.responseTime}ms</p>
                             </div>
                           )}
-
+                        </div>
                       </motion.div>
                     ))}
                   </div>
-
+                </ScrollArea>
               </CardContent>
-
+            </Card>
           </motion.div>
-
-
+        )}
+      </AnimatePresence>
     </div>
-
+  )
 }

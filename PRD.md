@@ -34,11 +34,11 @@ This is a utility dashboard with several distinct network tools that maintain st
 - **Success criteria**: Accurately shows user's public-facing network information
 
 ### History/Recent Scans
-- **Functionality**: Maintains a log of previous lookups and scans
+- **Functionality**: Maintains a log of previous lookups and scans with click sound effects
 - **Purpose**: Allows users to quickly re-check previous targets or review past results
 - **Trigger**: Automatically saves each successful scan
-- **Progression**: User completes scan → Result saved to KV storage → Displayed in history sidebar → User can click to reload
-- **Success criteria**: Persists between sessions, displays timestamp and key details, allows quick re-scanning
+- **Progression**: User completes scan → Result saved to KV storage → Displayed in history sidebar → User can click to reload with sound feedback
+- **Success criteria**: Persists between sessions, displays timestamp and key details, allows quick re-scanning, provides audio feedback
 
 ## Edge Case Handling
 
@@ -87,6 +87,7 @@ Animations should feel snappy and cyberpunk-inspired with glowing effects and el
 - **Hover States**: Subtle glow and scale on interactive elements (1.02x scale, cyan outer glow)
 - **Tab Transitions**: Quick fade with slight horizontal slide (200ms ease-out)
 - **Card Entry**: Cards fade up from bottom with stagger delay (100ms per card)
+- **Sound Effects**: Synthesized audio feedback for button clicks, scan start, scan completion, errors, and success states using Web Audio API
 
 ## Component Selection
 

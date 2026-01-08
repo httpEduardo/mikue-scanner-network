@@ -5,6 +5,7 @@ import { Play, Pause, SpeakerHigh, SpeakerSlash, MusicNotes, SpeakerLow, Speaker
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 import { useKV } from '@github/spark/hooks'
+import { useSoundEffects } from '@/hooks/use-sound-effects'
 
 export default function MusicPlayer() {
   const [isPlaying, setIsPlaying] = useState(false)
@@ -13,6 +14,7 @@ export default function MusicPlayer() {
   const [showVolumeSlider, setShowVolumeSlider] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [showStartButton, setShowStartButton] = useState(true)
+  const { playClickSound } = useSoundEffects()
 
   useEffect(() => {
     audioRef.current = new Audio()
@@ -54,6 +56,7 @@ export default function MusicPlayer() {
   const togglePlay = async () => {
     if (!audioRef.current) return
 
+    playClickSound()
     try {
       if (isPlaying) {
         audioRef.current.pause()
@@ -71,6 +74,7 @@ export default function MusicPlayer() {
   }
 
   const toggleMute = () => {
+    playClickSound()
     if (audioRef.current) {
       audioRef.current.muted = !isMuted
       setIsMuted(!isMuted)

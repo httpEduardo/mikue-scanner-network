@@ -8,6 +8,7 @@ import { Broadcast, CheckCircle, Warning, LockKey, LockKeyOpen } from '@phosphor
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import MikuCharacter from './MikuCharacter'
+import { useSoundEffects } from '@/hooks/use-sound-effects'
 
 interface PortScannerProps {
   onScanComplete: (scan: any) => void
@@ -41,6 +42,7 @@ export default function PortScanner({ onScanComplete }: PortScannerProps) {
   const [results, setResults] = useState<PortResult[]>([])
   const [error, setError] = useState('')
   const [progress, setProgress] = useState(0)
+  const { playClickSound, playScanStartSound, playScanCompleteSound, playErrorSound, playSuccessSound } = useSoundEffects()
 
   const simulatePortScan = async (host: string) => {
     const scanResults: PortResult[] = []
@@ -68,6 +70,7 @@ export default function PortScanner({ onScanComplete }: PortScannerProps) {
   const handleScan = async () => {
     if (!target) {
       setError('Please enter a target IP or domain')
+      playErrorSound()
       return
     }
 
@@ -75,6 +78,7 @@ export default function PortScanner({ onScanComplete }: PortScannerProps) {
     setError('')
     setResults([])
     setProgress(0)
+    playScanStartSound()
 
     try {
       const scanResults = await simulatePortScan(target)
@@ -87,9 +91,11 @@ export default function PortScanner({ onScanComplete }: PortScannerProps) {
       })
       
       const openCount = scanResults.filter(r => r.status === 'open').length
+      playScanCompleteSound()
       toast.success(`Scan complete! Found ${openCount} open ports`)
     } catch (err) {
       setError('Scan failed. Please try again.')
+      playErrorSound()
     } finally {
       setLoading(false)
       setProgress(0)
@@ -126,7 +132,10 @@ export default function PortScanner({ onScanComplete }: PortScannerProps) {
               className="flex-1"
             />
             <Button 
-              onClick={handleScan} 
+              onClick={() => {
+                playClickSound()
+                handleScan()
+              }} 
               disabled={loading}
               className="gap-2"
             >

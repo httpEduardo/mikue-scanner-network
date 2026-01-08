@@ -5,6 +5,7 @@ import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 import { ClockCounterClockwise, GlobeHemisphereWest, Broadcast, Eye } from '@phosphor-icons/react'
 import { motion } from 'framer-motion'
+import { useSoundEffects } from '@/hooks/use-sound-effects'
 
 interface ScanHistoryProps {
   history: any[]
@@ -12,6 +13,8 @@ interface ScanHistoryProps {
 }
 
 export default function ScanHistory({ history, onSelectScan }: ScanHistoryProps) {
+  const { playClickSound } = useSoundEffects()
+  
   const formatTime = (timestamp: number) => {
     const date = new Date(timestamp)
     const now = new Date()
@@ -89,7 +92,10 @@ export default function ScanHistory({ history, onSelectScan }: ScanHistoryProps)
                         variant="ghost"
                         size="sm"
                         className="h-6 px-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() => onSelectScan(scan)}
+                        onClick={() => {
+                          playClickSound()
+                          onSelectScan(scan)
+                        }}
                       >
                         <Eye size={14} />
                       </Button>

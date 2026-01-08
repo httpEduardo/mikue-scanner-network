@@ -8,6 +8,7 @@ import { MagnifyingGlass, CheckCircle, Warning, GlobeHemisphereWest } from '@pho
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
 import MikuCharacter from './MikuCharacter'
+import { useSoundEffects } from '@/hooks/use-sound-effects'
 
 interface DomainLookupProps {
   onScanComplete: (scan: any) => void
@@ -27,22 +28,26 @@ export default function DomainLookup({ onScanComplete }: DomainLookupProps) {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<LookupResult | null>(null)
   const [error, setError] = useState('')
+  const { playClickSound, playScanStartSound, playScanCompleteSound, playErrorSound, playSuccessSound } = useSoundEffects()
 
   const handleLookup = async () => {
     if (!domain) {
       setError('Please enter a domain name')
+      playErrorSound()
       return
     }
 
     const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?\.[a-zA-Z]{2,}$/
     if (!domainRegex.test(domain)) {
       setError('Please enter a valid domain name (e.g., example.com)')
+      playErrorSound()
       return
     }
 
     setLoading(true)
     setError('')
     setResult(null)
+    playScanStartSound()
 
     try {
       const response = await fetch(`https://ipapi.co/${domain}/json/`)
@@ -50,6 +55,7 @@ export default function DomainLookup({ onScanComplete }: DomainLookupProps) {
 
       if (data.error) {
         setError(data.reason || 'Failed to lookup domain')
+        playErrorSound()
         setLoading(false)
         return
       }
@@ -69,9 +75,11 @@ export default function DomainLookup({ onScanComplete }: DomainLookupProps) {
         domain,
         result: lookupResult
       })
+      playScanCompleteSound()
       toast.success(`Found IP for ${domain}!`)
     } catch (err) {
       setError('Network error occurred. Please try again.')
+      playErrorSound()
     } finally {
       setLoading(false)
     }
@@ -107,7 +115,10 @@ export default function DomainLookup({ onScanComplete }: DomainLookupProps) {
               className="flex-1"
             />
             <Button 
-              onClick={handleLookup} 
+              onClick={() => {
+                playClickSound()
+                handleLookup()
+              }} 
               disabled={loading}
               className="gap-2"
             >

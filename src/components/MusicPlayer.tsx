@@ -1,55 +1,19 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Play, Pause, SpeakerHigh, SpeakerSlash, YoutubeLogo } from '@phosphor-icons/react'
+import { SpeakerHigh, SpeakerSlash, YoutubeLogo } from '@phosphor-icons/react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export default function MusicPlayer() {
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [isMuted, setIsMuted] = useState(false)
-  const [showPlayer, setShowPlayer] = useState(false)
-  const [playerReady, setPlayerReady] = useState(false)
-  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const [showPlayer, setShowPlayer] = useState(true)
+  const [isPlaying, setIsPlaying] = useState(true)
 
   useEffect(() => {
-    audioRef.current = new Audio('https://archive.org/download/hatsune-miku-world-is-mine/Hatsune%20Miku%20-%20World%20Is%20Mine.mp3')
-    audioRef.current.loop = true
-    audioRef.current.volume = 0.6
-    setPlayerReady(true)
-
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause()
-        audioRef.current = null
-      }
-    }
+    setShowPlayer(true)
   }, [])
-
-  const togglePlay = () => {
-    if (!audioRef.current || !playerReady) return
-
-    if (isPlaying) {
-      audioRef.current.pause()
-    } else {
-      audioRef.current.play().catch(error => {
-        console.error('Erro ao reproduzir áudio:', error)
-      })
-    }
-    setIsPlaying(!isPlaying)
-  }
-
-  const toggleMute = () => {
-    if (!audioRef.current) return
-    
-    if (isMuted) {
-      audioRef.current.volume = 0.6
-    } else {
-      audioRef.current.volume = 0
-    }
-    setIsMuted(!isMuted)
-  }
 
   const togglePlayerVisibility = () => {
     setShowPlayer(!showPlayer)
+    setIsPlaying(!showPlayer)
   }
 
   return (
@@ -65,63 +29,11 @@ export default function MusicPlayer() {
             <Button
               size="sm"
               variant="ghost"
-              onClick={togglePlay}
-              className="w-10 h-10 rounded-full bg-primary/20 hover:bg-primary/30 border border-primary/40"
+              onClick={togglePlayerVisibility}
+              className="w-10 h-10 rounded-full bg-secondary/20 hover:bg-secondary/30 border border-secondary/40"
+              title={showPlayer ? "Ocultar Player" : "Mostrar Player"}
             >
-              <AnimatePresence mode="wait">
-                {isPlaying ? (
-                  <motion.div
-                    key="pause"
-                    initial={{ scale: 0, rotate: -180 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    exit={{ scale: 0, rotate: 180 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Pause size={20} weight="fill" className="text-primary" />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="play"
-                    initial={{ scale: 0, rotate: -180 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    exit={{ scale: 0, rotate: 180 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Play size={20} weight="fill" className="text-primary" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </Button>
-
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={toggleMute}
-              className="w-10 h-10 rounded-full bg-accent/20 hover:bg-accent/30 border border-accent/40"
-            >
-              <AnimatePresence mode="wait">
-                {isMuted ? (
-                  <motion.div
-                    key="muted"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <SpeakerSlash size={20} weight="fill" className="text-accent" />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="unmuted"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    exit={{ scale: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <SpeakerHigh size={20} weight="fill" className="text-accent" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <YoutubeLogo size={20} weight="fill" className="text-secondary" />
             </Button>
 
             <div className="flex flex-col">
@@ -152,16 +64,6 @@ export default function MusicPlayer() {
                 ))}
               </motion.div>
             )}
-
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={togglePlayerVisibility}
-              className="w-10 h-10 rounded-full bg-secondary/20 hover:bg-secondary/30 border border-secondary/40"
-              title="Mostrar/Ocultar YouTube Player"
-            >
-              <YoutubeLogo size={20} weight="fill" className="text-secondary" />
-            </Button>
           </div>
 
           <AnimatePresence>
@@ -177,7 +79,7 @@ export default function MusicPlayer() {
                 <iframe
                   width="320"
                   height="180"
-                  src="https://www.youtube.com/embed/LaEgpNBt-bQ?autoplay=0&loop=1&playlist=LaEgpNBt-bQ"
+                  src="https://www.youtube.com/embed/LaEgpNBt-bQ?autoplay=1&loop=1&playlist=LaEgpNBt-bQ&controls=1"
                   allow="autoplay; encrypted-media"
                   title="World is Mine - Hatsune Miku"
                   className="block"

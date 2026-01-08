@@ -1,6 +1,6 @@
 export type ScanType = "dns_propagation" | "http_tls" | "headers" | "port_discovery";
 
-export type ScanStatus = "queued" | "running" | "success" | "failed" | "canceled";
+export interface ScanJob {
 
 export interface ScanJob {
   id: string;
@@ -62,17 +62,17 @@ export interface SecurityHeadersResult {
     xcto: boolean;
     xfo: boolean;
     referrer: boolean;
-    permissions: boolean;
-  };
-  missing: string[];
-  headers: Record<string, string>;
 }
-
-export interface PortDiscoveryResult {
-  ip: string;
+expo
   ports: Array<{
-    port: number;
-    state: "open" | "closed" | "filtered";
-    timeMs: number;
-  }>;
-}
+    state: "open" | "closed" | "fi
+ 
+
+
+
+
+
+
+
+
+

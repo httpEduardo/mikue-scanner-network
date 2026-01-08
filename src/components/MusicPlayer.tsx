@@ -1,23 +1,110 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
-import { SpeakerHigh, SpeakerSlash, YoutubeLogo } from '@phosphor-icons/react'
+import { Play, Pause, SpeakerHigh, SpeakerSlash, YoutubeLogo } from '@phosphor-icons/react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { toast } from 'sonner'
 
 export default function MusicPlayer() {
   const [showPlayer, setShowPlayer] = useState(true)
-  const [isPlaying, setIsPlaying] = useState(true)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [isMuted, setIsMuted] = useState(false)
+  const [volume, setVolume] = useState(0.5)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const [showStartButton, setShowStartButton] = useState(true)
 
   useEffect(() => {
-    setShowPlayer(true)
+    audioRef.current = new Audio()
+    audioRef.current.src = 'https://www.youtube.com/watch?v=LaEgpNBt-bQ'
+    audioRef.current.loop = true
+    audioRef.current.volume = volume
+    
+    audioRef.current.addEventListener('ended', () => {
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0
+        audioRef.current.play()
+      }
+    })
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current = null
+      }
+    }
   }, [])
+
+  const startMusic = async () => {
+    if (audioRef.current) {
+      try {
+        await audioRef.current.play()
+        setIsPlaying(true)
+        setShowStartButton(false)
+        toast.success('🎵 World is Mine tocando!')
+      } catch (error) {
+        console.error('Erro ao tocar música:', error)
+        setShowStartButton(true)
+      }
+    }
+  }
+
+  const togglePlay = async () => {
+    if (!audioRef.current) return
+
+    try {
+      if (isPlaying) {
+        audioRef.current.pause()
+        setIsPlaying(false)
+      } else {
+        await audioRef.current.play()
+        setIsPlaying(true)
+        setShowStartButton(false)
+      }
+    } catch (error) {
+      console.error('Erro ao tocar música:', error)
+      toast.error('Erro ao tocar música. Clique no botão de play.')
+      setShowStartButton(true)
+    }
+  }
+
+  const toggleMute = () => {
+    if (audioRef.current) {
+      audioRef.current.muted = !isMuted
+      setIsMuted(!isMuted)
+    }
+  }
 
   const togglePlayerVisibility = () => {
     setShowPlayer(!showPlayer)
-    setIsPlaying(!showPlayer)
   }
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = isMuted ? 0 : volume
+    }
+  }, [volume, isMuted])
 
   return (
     <>
+      {showStartButton && (
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[100]"
+        >
+          <Button
+            size="lg"
+            onClick={startMusic}
+            className="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-accent text-white shadow-2xl hover:scale-110 transition-transform"
+            style={{ boxShadow: '0 0 60px oklch(0.65 0.15 195 / 0.6)' }}
+          >
+            <div className="flex flex-col items-center gap-2">
+              <Play size={40} weight="fill" />
+              <span className="text-xs font-bold">TOCAR MÚSICA</span>
+            </div>
+          </Button>
+        </motion.div>
+      )}
+
       <motion.div
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
@@ -29,11 +116,39 @@ export default function MusicPlayer() {
             <Button
               size="sm"
               variant="ghost"
-              onClick={togglePlayerVisibility}
+              onClick={togglePlay}
+              className="w-10 h-10 rounded-full bg-primary/20 hover:bg-primary/30 border border-primary/40"
+              title={isPlaying ? "Pausar" : "Tocar"}
+            >
+              {isPlaying ? (
+                <Pause size={20} weight="fill" className="text-primary" />
+              ) : (
+                <Play size={20} weight="fill" className="text-primary" />
+              )}
+            </Button>
+
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={toggleMute}
               className="w-10 h-10 rounded-full bg-secondary/20 hover:bg-secondary/30 border border-secondary/40"
+              title={isMuted ? "Ativar Som" : "Desativar Som"}
+            >
+              {isMuted ? (
+                <SpeakerSlash size={20} weight="fill" className="text-secondary" />
+              ) : (
+                <SpeakerHigh size={20} weight="fill" className="text-secondary" />
+              )}
+            </Button>
+
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={togglePlayerVisibility}
+              className="w-10 h-10 rounded-full bg-accent/20 hover:bg-accent/30 border border-accent/40"
               title={showPlayer ? "Ocultar Player" : "Mostrar Player"}
             >
-              <YoutubeLogo size={20} weight="fill" className="text-secondary" />
+              <YoutubeLogo size={20} weight="fill" className="text-accent" />
             </Button>
 
             <div className="flex flex-col">
@@ -79,7 +194,7 @@ export default function MusicPlayer() {
                 <iframe
                   width="320"
                   height="180"
-                  src="https://www.youtube.com/embed/LaEgpNBt-bQ?autoplay=1&loop=1&playlist=LaEgpNBt-bQ&controls=1"
+                  src={`https://www.youtube.com/embed/LaEgpNBt-bQ?autoplay=${isPlaying ? 1 : 0}&loop=1&playlist=LaEgpNBt-bQ&controls=1`}
                   allow="autoplay; encrypted-media"
                   title="World is Mine - Hatsune Miku"
                   className="block"

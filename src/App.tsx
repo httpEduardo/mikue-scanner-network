@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { useKV } from '@github/spark/hooks';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShieldCheck, Activity } from '@phosphor-icons/react';
+import { ShieldCheck, Activity, ArrowsLeftRight } from '@phosphor-icons/react';
 import SecurityScanner from '@/components/SecurityScanner';
 import ScanHistory from '@/components/ScanHistory';
+import HeadersComparison from '@/components/HeadersComparison';
 import type { ScanJob } from '@/lib/types';
 
 function App() {
@@ -62,7 +63,7 @@ function App() {
 
         <main className="container mx-auto px-6 py-8">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsList className="grid w-full grid-cols-3 mb-6">
               <TabsTrigger value="scanner" className="gap-2">
                 <ShieldCheck size={18} weight="duotone" />
                 Scanner
@@ -70,6 +71,10 @@ function App() {
               <TabsTrigger value="history" className="gap-2">
                 <Activity size={18} weight="duotone" />
                 History ({scans.length})
+              </TabsTrigger>
+              <TabsTrigger value="comparison" className="gap-2">
+                <ArrowsLeftRight size={18} weight="duotone" />
+                Compare
               </TabsTrigger>
             </TabsList>
 
@@ -82,6 +87,10 @@ function App() {
 
             <TabsContent value="history" className="mt-0">
               <ScanHistory scans={scans} onClearHistory={clearHistory} />
+            </TabsContent>
+
+            <TabsContent value="comparison" className="mt-0">
+              <HeadersComparison scans={scans} />
             </TabsContent>
           </Tabs>
         </main>

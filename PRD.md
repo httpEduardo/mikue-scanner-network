@@ -54,6 +54,13 @@ The toolkit offers several scanning modules with job queue simulation and persis
 - **Progression**: Scan completes → Store in KV → Display in sidebar → Click to view details
 - **Success criteria**: History persists across sessions and displays all scan metadata
 
+### Security Headers Comparison View
+- **Functionality**: Compare multiple security header scans for the same target over time
+- **Purpose**: Track changes in security posture and identify configuration drift
+- **Trigger**: Click "Compare" tab in History view when multiple header scans exist
+- **Progression**: Select target → Filter header scans → Select 2+ scans → View side-by-side comparison → See added/removed/changed headers
+- **Success criteria**: Clear visualization of header changes with timestamps, showing improvements or regressions in security configuration
+
 ## Edge Case Handling
 - **Invalid Targets**: Validate domain/IP format before allowing scan execution
 - **Network Failures**: Display clear error messages when scans fail with retry option

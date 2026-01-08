@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { ScrollArea } from '@/components/ui/s
 import { Progress } from '@/components/ui/progress'
+  GlobeHemisphereWest,
+  XCircle,
 import { 
   GlobeHemisphereWest,
   CheckCircle,
@@ -14,15 +14,15 @@ import {
   ClockCounterClockwise
 } from '@phosphor-icons/react'
 import { toast } from 'sonner'
-import { motion, AnimatePresence } from 'framer-motion'
-import MikuCharacter from './MikuCharacter'
-import { useSoundEffects } from '@/hooks/use-sound-effects'
-
-interface DNSServer {
   name: string
-  provider: string
   location: string
-}
+
+
+  ip?: string
+  error?: stri
+
+  { name: 'Google 
+ 
 
 interface PropagationResult {
   server: DNSServer
@@ -62,18 +62,18 @@ interface DNSPropagationCheckerProps {
 export default function DNSPropagationChecker({ onScanComplete }: DNSPropagationCheckerProps) {
   const [domain, setDomain] = useState('')
   const [recordType, setRecordType] = useState<'A' | 'AAAA' | 'CNAME' | 'MX' | 'TXT'>('A')
-  const [results, setResults] = useState<PropagationResult[]>([])
-  const [isChecking, setIsChecking] = useState(false)
-  const [progress, setProgress] = useState(0)
-  const [expectedValue, setExpectedValue] = useState<string>('')
+    
+      toast.error('Please enter a valid domain name')
+      return
+
   const { playClickSound, playScanStartSound, playScanCompleteSound, playErrorSound, playSuccessSound } = useSoundEffects()
 
-  const handleCheck = async () => {
-    if (!domain.trim()) {
-      toast.error('Please enter a domain')
+
+      server,
+    }))
       playErrorSound()
       return
-    }
+
 
     const cleanDomain = domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '').trim()
     const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?(\.[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?)*\.[a-zA-Z]{2,}$/
@@ -84,31 +84,31 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
       return
     }
 
-    setIsChecking(true)
+        }
     setProgress(0)
     setExpectedValue('')
     playScanStartSound()
 
-    const allResults: PropagationResult[] = DNS_SERVERS.map(server => ({
+          ip: isMismatch ? `${Math.floor(Math.random() * 256)}.${Math.fl
       server,
-      status: 'checking' as const
+        allResults[i] = {
     }))
 
     setResults(allResults)
 
-    let firstResolvedValue = ''
 
-    for (let i = 0; i < DNS_SERVERS.length; i++) {
-      const server = DNS_SERVERS[i]
-      const startTime = Date.now()
-      
-      try {
-        await new Promise(resolve => setTimeout(resolve, 300 + Math.random() * 700))
+
+    playScanCompleteSound()
+      playSuccessSound()
+    } else if (propagationPercenta
+    } 
+    }
+    if (onScanComplete) {
         
-        const mockIp = `${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`
+        recordType,
         
-        if (!firstResolvedValue) {
-          firstResolvedValue = mockIp
+    }
+    setIsChecking(false)
           setExpectedValue(mockIp)
         }
 
@@ -270,7 +270,7 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             className="flex justify-center"
-          >
+           
             <MikuCharacter mood="scanning" size="medium" />
           </motion.div>
         )}
@@ -280,7 +280,7 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-          >
+           
             <Card className="glow-border bg-card/50 backdrop-blur">
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -347,15 +347,15 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
               </CardContent>
             </Card>
           </motion.div>
-        )}
+
 
         {!isChecking && results.length === 0 && (
           <div className="text-center py-12 text-muted-foreground">
             <GlobeHemisphereWest size={48} className="mx-auto mb-4 opacity-50" weight="duotone" />
-            <p className="text-sm">Enter a domain name and select a record type to check DNS propagation</p>
-          </div>
+
+
         )}
       </AnimatePresence>
     </div>
-  )
+
 }

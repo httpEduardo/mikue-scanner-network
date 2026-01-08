@@ -53,21 +53,26 @@ export default function HTTPMethodTester({ onScanComplete }: HTTPMethodTesterPro
     const startTime = performance.now()
     
     try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000)
+      
       const response = await fetch(url, {
         method: method,
         mode: 'cors',
         cache: 'no-cache',
+        signal: controller.signal,
         headers: {
           'Content-Type': 'application/json',
         },
       })
       
+      clearTimeout(timeoutId)
       const endTime = performance.now()
       const responseTime = Math.round(endTime - startTime)
       
       return {
         method,
-        allowed: response.ok || response.status < 400,
+        allowed: response.ok || (response.status >= 200 && response.status < 500),
         statusCode: response.status,
         statusText: response.statusText,
         responseTime
@@ -76,11 +81,20 @@ export default function HTTPMethodTester({ onScanComplete }: HTTPMethodTesterPro
       const endTime = performance.now()
       const responseTime = Math.round(endTime - startTime)
       
-      if (error.message.includes('Failed to fetch') || error.message.includes('CORS')) {
+      if (error.name === 'AbortError') {
         return {
           method,
           allowed: false,
-          error: 'CORS/Network Error',
+          error: 'Request timeout',
+          responseTime
+        }
+      }
+      
+      if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+        return {
+          method,
+          allowed: false,
+          error: 'Network/CORS Error',
           responseTime
         }
       }
@@ -182,7 +196,7 @@ export default function HTTPMethodTester({ onScanComplete }: HTTPMethodTesterPro
           HTTP Method Tester
         </CardTitle>
         <CardDescription>
-          Test which HTTP methods are allowed on a target URL
+          Test which HTTP methods are allowed on a target URL (domain or IP)
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -190,7 +204,7 @@ export default function HTTPMethodTester({ onScanComplete }: HTTPMethodTesterPro
           <Input
             id="http-method-url"
             type="text"
-            placeholder="example.com or https://example.com"
+            placeholder="example.com, https://example.com or https://8.8.8.8"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && testAllMethods()}

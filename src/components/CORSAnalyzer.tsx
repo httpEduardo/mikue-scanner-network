@@ -63,14 +63,8 @@ export default function CORSAnalyzer({ onScanComplete }: CORSAnalyzerProps) {
       }
 
       const response = await fetch(targetUrl, {
-        method: 'OPTIONS',
-        headers: {
-          'Origin': window.location.origin,
-          'Access-Control-Request-Method': 'GET',
-          'Access-Control-Request-Headers': 'Content-Type'
-        }
-      }).catch(() => {
-        return fetch(targetUrl, { method: 'GET' })
+        method: 'GET',
+        mode: 'cors'
       })
 
       const headers = response.headers
@@ -206,14 +200,14 @@ export default function CORSAnalyzer({ onScanComplete }: CORSAnalyzerProps) {
           CORS Analyzer
         </CardTitle>
         <CardDescription>
-          Check Cross-Origin Resource Sharing policies and security configuration
+          Check Cross-Origin Resource Sharing policies and security configuration (domain or IP)
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex gap-3">
           <Input
             id="cors-url"
-            placeholder="Enter URL (e.g., api.example.com)"
+            placeholder="Enter URL (e.g., https://api.example.com or https://8.8.8.8)"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && analyzeCORS()}

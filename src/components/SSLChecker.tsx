@@ -35,16 +35,17 @@ export default function SSLChecker({ onScanComplete }: SSLCheckerProps) {
 
   const handleCheck = async () => {
     if (!domain) {
-      setError('Please enter a domain name')
+      setError('Please enter a domain name or IP address')
       playErrorSound()
       return
     }
 
     const cleanDomain = domain.replace(/^https?:\/\//, '').replace(/\/.*$/, '').trim()
+    const ipRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
     const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?(\.[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?)*\.[a-zA-Z]{2,}$/
     
-    if (!domainRegex.test(cleanDomain)) {
-      setError('Please enter a valid domain name (e.g., example.com)')
+    if (!domainRegex.test(cleanDomain) && !ipRegex.test(cleanDomain)) {
+      setError('Please enter a valid domain name (e.g., example.com) or IP address')
       playErrorSound()
       return
     }
@@ -118,14 +119,14 @@ export default function SSLChecker({ onScanComplete }: SSLCheckerProps) {
             SSL/TLS Certificate Checker
           </CardTitle>
           <CardDescription>
-            Verify SSL certificate validity and security grade
+            Verify SSL certificate validity and security grade (domain or IP)
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-2">
             <Input
               id="ssl-domain-input"
-              placeholder="example.com"
+              placeholder="example.com or 8.8.8.8"
               value={domain}
               onChange={(e) => setDomain(e.target.value)}
               onKeyPress={handleKeyPress}

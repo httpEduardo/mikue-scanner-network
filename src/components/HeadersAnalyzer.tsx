@@ -177,14 +177,14 @@ export default function HeadersAnalyzer({ onScanComplete }: HeadersAnalyzerProps
             HTTP Headers Analyzer
           </CardTitle>
           <CardDescription>
-            Analyze security headers and get recommendations
+            Analyze security headers and get recommendations (domain or IP)
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-2">
             <Input
               id="headers-url-input"
-              placeholder="https://example.com"
+              placeholder="https://example.com or https://8.8.8.8"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               onKeyPress={handleKeyPress}

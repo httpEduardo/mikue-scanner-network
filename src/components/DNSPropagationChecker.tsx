@@ -1,43 +1,45 @@
 import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
-import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { ScrollArea } from '@/components/ui/s
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
-  ClockCo
-} from '@phosph
-
-  name: string
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import {
+  CheckCircle,
+  XCircle,
+  ClockCounterClockwise,
   Warning,
   GlobeHemisphereWest
 } from '@phosphor-icons/react'
-  status: 'checking' | 'succes
+import { toast } from 'sonner'
 
-}
-const DNS_SERV
-  { name: 'Cloudfl
-  { name: 'Quad9',
- 
-
-
-  onScanComplete?: 
-
-  const [doma
-  const [results, setRe
-  const [progres
+interface DNSServer {
+  name: string
+  provider: string
+  location: string
 }
 
-      return
+interface PropagationResult {
+  server: DNSServer
+  status: 'checking' | 'success' | 'mismatch' | 'failure'
+  ip?: string
+  responseTime?: number
+  error?: string
+}
 
-    setProgress(0)
-
-      server,
-    }))
-    setResults(allResults)
-    let completedChecks = 0
-
- 
+const DNS_SERVERS: DNSServer[] = [
+  { name: 'Cloudflare', provider: '1.1.1.1', location: 'Global' },
+  { name: 'Quad9', provider: '9.9.9.9', location: 'Global' },
+  { name: 'Google', provider: '8.8.8.8', location: 'Global' },
+  { name: 'OpenDNS', provider: '208.67.222.222', location: 'Global' },
+  { name: 'Level3', provider: '209.244.0.3', location: 'USA' },
+  { name: 'Verisign', provider: '64.6.64.6', location: 'Global' },
+  { name: 'DNS.WATCH', provider: '84.200.69.80', location: 'Germany' },
+  { name: 'Comodo', provider: '8.26.56.26', location: 'Global' },
+  { name: 'Freenom', provider: '80.80.80.80', location: 'Netherlands' },
+  { name: 'Yandex', provider: '77.88.8.8', location: 'Russia' },
+]
 
 interface DNSPropagationCheckerProps {
   onScanComplete?: (scan: any) => void
@@ -45,6 +47,41 @@ interface DNSPropagationCheckerProps {
 
 export default function DNSPropagationChecker({ onScanComplete }: DNSPropagationCheckerProps) {
   const [domain, setDomain] = useState('')
+  const [recordType, setRecordType] = useState<'A' | 'AAAA' | 'CNAME' | 'MX'>('A')
+  const [results, setResults] = useState<PropagationResult[]>([])
+  const [isChecking, setIsChecking] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [expectedValue, setExpectedValue] = useState<string>('')
+
+  const checkDNSPropagation = async () => {
+    if (!domain) {
+      toast.error('Please enter a domain name')
+      return
+    }
+
+    setIsChecking(true)
+    setProgress(0)
+    setExpectedValue('')
+
+    const allResults: PropagationResult[] = DNS_SERVERS.map(server => ({
+      server,
+      status: 'checking' as const
+    }))
+    setResults(allResults)
+    let completedChecks = 0
+    let firstResolvedValue: string | null = null
+
+    for (let i = 0; i < DNS_SERVERS.length; i++) {
+      const server = DNS_SERVERS[i]
+      const startTime = Date.now()
+
+      try {
+        const mockIp = `${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`
+        
+        await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000))
+
+        if (!firstResolvedValue) {
+          firstResolvedValue = mockIp
           setExpectedValue(mockIp)
         }
 

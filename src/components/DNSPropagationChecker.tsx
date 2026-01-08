@@ -2,86 +2,86 @@ import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import {
   CheckCircle,
-  XCircle,
   ClockCounterClockwise,
+  GlobeHemisphereWest
+import {
+interface DNSS
+  provider
+}
   Warning,
   GlobeHemisphereWest
 } from '@phosphor-icons/react'
-import { toast } from 'sonner'
-
-interface DNSServer {
-  name: string
-  provider: string
-  location: string
 }
 
-interface PropagationResult {
-  server: DNSServer
-  status: 'checking' | 'success' | 'mismatch' | 'failure'
-  ip?: string
-  responseTime?: number
-  error?: string
+  { name: 'Quad9', pr
+  { name: 'Ope
+  { name: 'Verisig
+  { name: 'Comodo'
 }
 
-const DNS_SERVERS: DNSServer[] = [
-  { name: 'Cloudflare', provider: '1.1.1.1', location: 'Global' },
-  { name: 'Quad9', provider: '9.9.9.9', location: 'Global' },
-  { name: 'Google', provider: '8.8.8.8', location: 'Global' },
-  { name: 'OpenDNS', provider: '208.67.222.222', location: 'Global' },
-  { name: 'Level3', provider: '209.244.0.3', location: 'USA' },
-  { name: 'Verisign', provider: '64.6.64.6', location: 'Global' },
-  { name: 'DNS.WATCH', provider: '84.200.69.80', location: 'Germany' },
-  { name: 'Comodo', provider: '8.26.56.26', location: 'Global' },
-  { name: 'Freenom', provider: '80.80.80.80', location: 'Netherlands' },
-  { name: 'Yandex', provider: '77.88.8.8', location: 'Russia' },
-]
+  onScanComplete?: (scan: any
 
-interface DNSPropagationCheckerProps {
-  onScanComplete?: (scan: any) => void
-}
-
-export default function DNSPropagationChecker({ onScanComplete }: DNSPropagationCheckerProps) {
   const [domain, setDomain] = useState('')
-  const [recordType, setRecordType] = useState<'A' | 'AAAA' | 'CNAME' | 'MX'>('A')
-  const [results, setResults] = useState<PropagationResult[]>([])
-  const [isChecking, setIsChecking] = useState(false)
-  const [progress, setProgress] = useState(0)
-  const [expectedValue, setExpectedValue] = useState<string>('')
+  const [resu
+  const [progress, setP
 
-  const checkDNSPropagation = async () => {
-    if (!domain) {
-      toast.error('Please enter a domain name')
-      return
-    }
+}
 
-    setIsChecking(true)
+
     setProgress(0)
-    setExpectedValue('')
 
-    const allResults: PropagationResult[] = DNS_SERVERS.map(server => ({
       server,
-      status: 'checking' as const
+    }))
+    let completedChecks = 0
+
+      const server = DNS_SERVERS[i]
+
+        const mockIp = `${Math.floor(Math.random() * 256)}.${Math.floor(
+        await new Promise(resolve => setTimeout(resolve, 500 + M
+ 
+
+
+
+ 
+
+        }
+        allResults[i] = {
+          status: 'failure',
+          error: 'Query failed'
+      }
+      completedChecks++
+      setResults([...allResults])
+
+    toast.success('DNS propagation check co
+    if (onScanComp
+        type: 'dns-propagation',
+      return
+     
+
+
+    setProgress(0)
+        return <Badge cl
+
+        return <Badge variant="destructive">Failed</Badge>
+      server,
+  }
     }))
     setResults(allResults)
     let completedChecks = 0
-    let firstResolvedValue: string | null = null
+      case 'failure':
 
-    for (let i = 0; i < DNS_SERVERS.length; i++) {
-      const server = DNS_SERVERS[i]
-      const startTime = Date.now()
+    }
 
-      try {
-        const mockIp = `${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`
+  const totalCount = results.lengt
+
+      <Card
+          <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
         
-        await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000))
+            <CardTitle>DNS Propagation Checker</CardTitle>
 
-        if (!firstResolvedValue) {
-          firstResolvedValue = mockIp
+      </CardHeader>
+        <div className="flex gap-2">
           setExpectedValue(mockIp)
         }
 
@@ -172,7 +172,7 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
             disabled={isChecking}
             className="flex-1"
           />
-          <select
+                 
             value={recordType}
             onChange={(e) => setRecordType(e.target.value as any)}
             disabled={isChecking}
@@ -180,11 +180,11 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
           >
             <option value="A">A</option>
             <option value="AAAA">AAAA</option>
-            <option value="CNAME">CNAME</option>
+            </ScrollArea>
             <option value="MX">MX</option>
-          </select>
+
           <Button
-            onClick={checkDNSPropagation}
+            <p className="text-sm">Enter 
             disabled={isChecking}
             className="gap-2"
           >
@@ -192,13 +192,13 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
               <>
                 <ClockCounterClockwise className="animate-spin" size={18} weight="duotone" />
                 Checking
-              </>
+
             ) : (
-              <>
+
                 <GlobeHemisphereWest size={18} weight="duotone" />
-                Check
+
               </>
-            )}
+
           </Button>
         </div>
 
@@ -208,9 +208,9 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
             <div className="flex justify-between items-center text-sm">
               <span className="text-muted-foreground">Checking DNS servers...</span>
               <span className="text-muted-foreground">{Math.round(progress)}%</span>
-            </div>
+
           </div>
-        )}
+
 
         {results.length > 0 && (
           <div className="space-y-4">
@@ -218,7 +218,7 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
               <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
                 <p className="text-xs text-muted-foreground mb-1">Expected Value</p>
                 <p className="font-mono text-sm text-primary font-bold">{expectedValue}</p>
-              </div>
+
             )}
 
             <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
@@ -226,7 +226,7 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
               <div className="flex items-center gap-2">
                 <span className="font-mono text-lg font-bold">
                   {successCount}/{totalCount}
-                </span>
+
                 {getStatusBadge(successCount === totalCount ? 'success' : successCount > 0 ? 'mismatch' : 'failure')}
               </div>
             </div>
@@ -234,7 +234,7 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
             <ScrollArea className="h-[500px]">
               <div className="space-y-2">
                 {results.map((result, index) => (
-                  <div
+
                     key={index}
                     className="p-4 rounded-lg border bg-card/50 hover:bg-card/80 transition-colors"
                   >
@@ -254,7 +254,7 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
                     {result.ip && (
                       <div className="p-2 rounded bg-muted/50 mb-2">
                         <p className="text-xs text-muted-foreground mb-1">Resolved Value</p>
-                        <p className="font-mono text-sm">{result.ip}</p>
+
                       </div>
                     )}
 
@@ -262,7 +262,7 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
                       {result.responseTime !== undefined && (
                         <p className="text-xs text-muted-foreground">
                           Response: {result.responseTime}ms
-                        </p>
+
                       )}
                       {result.error && (
                         <p className="text-xs text-destructive">{result.error}</p>
@@ -270,17 +270,17 @@ export default function DNSPropagationChecker({ onScanComplete }: DNSPropagation
                     </div>
                   </div>
                 ))}
-              </div>
+
             </ScrollArea>
-          </div>
+
         )}
 
         {!isChecking && results.length === 0 && (
-          <div className="text-center py-12 text-muted-foreground">
+
             <p className="text-sm">Enter a domain name and select a record type to check DNS propagation</p>
-          </div>
+
         )}
-      </CardContent>
+
     </Card>
-  )
+
 }
